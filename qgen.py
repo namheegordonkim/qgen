@@ -1,4 +1,4 @@
-import argparse, random, re
+import argparse, random, re, os
 
 random.seed()
 
@@ -20,7 +20,7 @@ class TopicNetwork:
         By probability p move onto next
         """
 
-        print len(self.topics)
+        print(len(self.topics))
 
         if len(self.topics) == 0:
             raise "Too many questions"
@@ -52,7 +52,7 @@ class Question:
 def parse_answers(answer_split_list):
     if len(answer_split_list) == 0:
         return []
-    print answer_split_list
+    print(answer_split_list)
     m = re.match(answer_pattern, answer_split_list[0])
     if m == None:
         return []
@@ -87,75 +87,78 @@ def parse_topics(topic_split_list):
     new_topic = Topic(topic_title, questions)
     return [new_topic] + parse_topics(topic_split_list[2:])
 
-# initialize and parse arguments
-parser = argparse.ArgumentParser()
-parser.add_argument("filenames", nargs="+", type=str)
-parser.add_argument("n", type=int)
-parser.add_argument("--star_only", action='store_true')
-args = parser.parse_args()
-filenames = args.filenames
-n = int(args.n)
+def main():
+    # initialize and parse arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--filenames", required=True, action='store', nargs="+", type=str, help="List of file names to take into quiz")
+    parser.add_argument("-n", "--num-questions", required=True, action='store', type=int, help="Total number of questions in quiz")
+    parser.add_argument('-q', '--output-quiz-file', required=True, action='store', type=str, help='Output quiz filename')
+    parser.add_argument('-a', '--output-answer-file', required=True, action='store', type=str, help='Output answer filename')
+    parser.add_argument('-A', '--output-allq-file', required=True, action='store', type=str, help='Output all-questions filename')
 
-allq = []
-outputname=""
+    args = parser.parse_args()
 
+    v = vars(args)
+    filenames = v['filenames']
+    n = v['num_questions']
+    wf = open(v['output_quiz_file'], 'w')
+    af = open(v['output_answer_file'], 'w')
+    aq = open(v['output_allq_file'], 'w')
 
-# hierarchy:
-# topic has zero or more questions,
-# question has zero or more answers
+    allq = []
 
-topics = []
-for filename in filenames:
-    f = open(filename)
+    # hierarchy:
+    # topic has zero or more questions,
+    # question has zero or more answers
 
-    rawtext = f.read()
-    topic_split = re.split(topic_pattern, rawtext)
-    topics = topics + parse_topics(topic_split)
-    f.close()
+    topics = []
+    for filename in filenames:
+        f = open(filename)
 
-    outputname += filename[0:-4]
+        rawtext = f.read()
+        topic_split = re.split(topic_pattern, rawtext)
+        topics = topics + parse_topics(topic_split)
+        f.close()
 
+    # write chosen number of random questions into -qgen.txt file
 
-# write chosen number of random questions into -qgen.txt file
+    num = 1
+    for topic in topics:
+        # print "Topic Title: " + topic.text
+        for q in topic.topic_qs:
+            # print "Question Title: " + q.text
+            for a in q.answers:
+                print("Answer: " + a)
 
-wf = open(outputname+"-qgen.txt","w")
-af = open(outputname+"-qgen-ans.txt","w")
-aq = open(outputname+"-qgen-allq.txt", "w")
+            aq.write(str(num)+ ". " + q.text + " (" + topic.text + ")")
+            aq.write("\n")
+            num += 1
 
-num = 1
-for topic in topics:
-    # print "Topic Title: " + topic.text
-    for q in topic.topic_qs:
-        # print "Question Title: " + q.text
+    topic_network = TopicNetwork(topics, 0.8)
+
+    num = 1
+    while num <= n:
+        t, q = topic_network.run()
+        wf.write(str(num)+ ". " + q.text + " (" + t.text + ")")
+        af.write(str(num)+ ". " + q.text + " (" + t.text + ")")
+        af.write("\n")
         for a in q.answers:
-            print "Answer: " + a
+            af.write(a)
+            af.write("\n")
+        num = num+1
+        for i in range(6):
+            wf.write("\n")
+        for i in range(2):
+            af.write("\n")
+    wf.close()
+    af.close()
+    aq.close()
 
-        aq.write(str(num)+ ". " + q.text + " (" + topic.text + ")")
-        aq.write("\n")
-        num += 1
+    num = 1
+    while num <= n:
+        t, q = topic_network.run()
 
-topic_network = TopicNetwork(topics, 0.8)
+        num = num+1
 
-num = 1
-while num <= n:
-    t, q = topic_network.run()
-    wf.write(str(num)+ ". " + q.text + " (" + t.text + ")")
-    af.write(str(num)+ ". " + q.text + " (" + t.text + ")")
-    af.write("\n")
-    for a in q.answers:
-        af.write(a)
-        af.write("\n")
-    num = num+1
-    for i in range(6):
-        wf.write("\n")
-    for i in range(2):
-        af.write("\n")
-wf.close()
-af.close()
-aq.close()
-
-num = 1
-while num <= n:
-    t, q = topic_network.run()
-
-    num = num+1
+if __name__ == '__main__':
+    main()
