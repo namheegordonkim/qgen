@@ -1,11 +1,11 @@
 #!/usr/bin/bash
-
-read -e -p "Specify the file you want to use: " file_name
+read -e -p "Specify the file you want to use: " filename
 read -p "Specify the number of questions: " numq
-file_name=${file_name/#\~/$HOME}
-filename_noext=${file_name%%.*}
-python qgen.py \
--f $file_name \
+filename=${filename/#\~/$HOME}
+filename_noext=${filename%%.*}
+echo $filename $numq
+python ~/workspace/qgen/qgen.py \
+-f $filename \
 -n $numq \
 -q $filename_noext-qgen.txt \
 -a $filename_noext-ans.txt \

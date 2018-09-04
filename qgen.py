@@ -114,7 +114,6 @@ def main():
     topics = []
     for filename in filenames:
         f = open(filename)
-
         rawtext = f.read()
         topic_split = re.split(topic_pattern, rawtext)
         topics = topics + parse_topics(topic_split)
@@ -150,6 +149,7 @@ def main():
             wf.write("\n")
         for i in range(2):
             af.write("\n")
+
     wf.close()
     af.close()
     aq.close()
