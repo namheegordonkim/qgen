@@ -1,4 +1,4 @@
-import argparse, random, re, os
+import argparse, random, re, os, numpy
 
 random.seed()
 
@@ -8,6 +8,7 @@ question_pattern = "(\n\*+.+\n)"
 answer_pattern = "(\n?\-\>.+\n?)"
 
 class TopicNetwork:
+
     def __init__(self, topics, p):
         self.currentIdx = random.randrange(len(topics))
         self.topics = topics
@@ -16,14 +17,12 @@ class TopicNetwork:
     def run(self):
         """
         Run one step of the TN.
-        Spit a random question of current topic.
+        Pop a random question of current topic.
         By probability p move onto next
         """
 
-        print(len(self.topics))
-
         if len(self.topics) == 0:
-            raise "Too many questions"
+            raise "Error: Too many questions!"
 
         # choose a random question
         self.currentIdx = self.currentIdx % len(self.topics)
@@ -33,8 +32,9 @@ class TopicNetwork:
         if len(qs) <= 0:
             self.topics.pop(self.currentIdx)
             return self.run()
-        random.shuffle(qs)
-        q = qs.pop(random.randrange(len(qs)))
+
+        q = random.choice(qs)
+        qs.remove(q)
         if random.random() + len(qs)/100.0 <= self.p:
             self.currentIdx += 1
         return t, q
@@ -52,7 +52,6 @@ class Question:
 def parse_answers(answer_split_list):
     if len(answer_split_list) == 0:
         return []
-    print(answer_split_list)
     m = re.match(answer_pattern, answer_split_list[0])
     if m == None:
         return []
@@ -87,6 +86,15 @@ def parse_topics(topic_split_list):
     new_topic = Topic(topic_title, questions)
     return [new_topic] + parse_topics(topic_split_list[2:])
 
+
+def get_all_questions(topic_network):
+    question_list = []
+    for topic in topic_network.topics:
+        for question in topic.topic_qs:
+            question_list.append(question)
+    return question_list
+
+
 def main():
     # initialize and parse arguments
     parser = argparse.ArgumentParser()
@@ -120,19 +128,6 @@ def main():
         f.close()
 
     # write chosen number of random questions into -qgen.txt file
-
-    num = 1
-    for topic in topics:
-        # print "Topic Title: " + topic.text
-        for q in topic.topic_qs:
-            # print "Question Title: " + q.text
-            for a in q.answers:
-                print("Answer: " + a)
-
-            aq.write(str(num)+ ". " + q.text + " (" + topic.text + ")")
-            aq.write("\n")
-            num += 1
-
     topic_network = TopicNetwork(topics, 0.8)
 
     num = 1

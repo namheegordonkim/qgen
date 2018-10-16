@@ -10,4 +10,4 @@ python ~/workspace/qgen/qgen.py \
 -q $filename_noext-qgen.txt \
 -a $filename_noext-ans.txt \
 -A $filename_noext-allq.txt
-gedit $filename_noext-qgen.txt
+gedit $filename_noext-qgen.txt $filename_noext-ans.txt
