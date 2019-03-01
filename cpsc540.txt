@@ -1,0 +1,1626 @@
+﻿CPSC 540: Machine Learning
+
+Instructor: Mark Schmidt
+
+5 Assignments: 40%
+Final: 30%
+Project: 30%
+
+what's gonna be in the final?
+-> technical and conceptual
+-> bring cheat sheet
+
+what's the course project?
+-> project proposal due with A4
+-> literature review due with A5
+-> project due late April
+
+=== Introduction ===
+
+01/03
+
+why do we want shallow and broad in ML?
+-> better to know many than 5 in detail
+-> no free lunch theorem
+-> just get the core ideas and fill in details later
+-> learn what is useful where and when
+
+340 Overview
+
+*what is x~?
+-> formerly xhat
+-> new input
+
+*how do we form the data matrix X?
+-> examples are not row vectors anymore.
+-> examples are column vectors
+-> X is formed by transposed column vectors instead of row vectors
+
+*what is a loss plus regularizer framework?
+-> objective function is made of loss function plus regularization function
+
+*what are non-linear effects?
+-> change of basis
+-> kernel trick
+-> SMF
+-> NN
+
+--- Part 1: Optimization ---
+
+=== Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors ===
+
+01/05
+
+*what is the formal definition of test error?
+-> expectation of the absolute loss
+-> think of yhat and ytilda as random variables
+-> test examples come from a distribution, meaning ytilda is based on some distribution
+-> assuming IID, yhat should also come from the same distribution
+
+*what is the difference between test set error and test error?
+-> test error is the error on a test set
+-> test error is the expectation of absolute loss
+-> test set error is the measured error based on the test set
+-> we want test set error to approximate test error
+
+*why is golden rule important in terms of test set error?
+-> golden rule: test set cannot influence the training
+-> test set error is not an unbiased test error if not honored
+
+*why are typical supervised learning steps bad?
+-> split data
+-> set hyperparameters (use lambda to note any hyperparameters)
+-> for a bunch of different values of lambda, fit a model
+-> for each value of lambda, evaluate the performance in terms of test set error
+-> this can overfit when optimization bias is introduced
+-> looking at validation set many times means we're violating the golden rule!!!
+-> everyone does this
+
+*why is it important for data to be IID?
+-> Evalid is unbiased only when data is IID
+
+*what does Hoeffding's inequality tell us about validation error?
+-> probability that Evalid is far from Etest goes exponentially down with the number of examples
+
+*how does k (number of hyperparameters) and t (number of training examples) relate?
+-> we can't use Hoeffding's inequality because minimum validation error is taken over many validation errors
+-> use union bound property, translate "union" as "any"
+-> end up getting multiplier k (number of hyperparameters) in Hoeffding bound
+-> if we have small k and large t, it's not too bad
+-> using gradient descent is similar to optimizing over continuous space, so the bound is useless.
+
+*what is the effect of k on fixed t?
+-> with t fixed, increasing k makes model overfit
+
+*what is generalization error?
+-> test set might include some samples we've seen before
+-> average error over unseen xi values
+-> no free lunch theorem says generalization error cannot be minimized by one model
+
+*what is a deterministic model?
+-> consider models to be over all possible labels
+-> one particular set of labels is the true deterministic model
+
+*what is a learning problem?
+-> assuming deterministic model, a mapping between a feature set and a model
+
+*what is NFL theorem?
+-> no free lunch
+-> each learning problem is a map from the feature set to labels
+-> in all-binary cases, we have (2^d - n) unseen examples. generalization error is over this (including our usual test set)
+-> naive bayes can beat CNN on a specific learning problem
+-> average generalization error of every model is 50% on unseen examples
+
+*what is Ebest?
+-> the best error possible
+-> aka when we choose the "true model" used to generate the data
+-> we don't know what Ebest really is for a model
+
+*what is the refined fundamental trade-off?
+-> Etest = variance + bias + noise
+-> variance = Etest - Etrain
+-> bias = Etrain - Ebest
+-> noise = Ebest, since 0 noise means Ebest = 0
+-> must trade variance and bias
+
+*what is universal consistency?
+-> Etest converges to Ebest as n goes to infinity for ALL problems in the class
+-> must assume continuity assumption and boundedness assumption
+-> continuity assumption means y is function of x and if x's are close, y's should be close
+-> consistency doesn't say anything about finite n, so don't trust asymptotics
+-> non-parametric models are consistent
+
+*what is the difference between parametric and non-parametric models in terms of Etest?
+-> non-parametric models are consistent
+-> Etest will converge to Ebest if data is infinite
+
+01/08
+
+=== Convex Optimization, Linear Programming ===
+
+ICML and NIPS are the best places to publish machine learning
+
+*why study optimization?
+-> size of the dataset and size of the model
+-> large scale machine learning goes hand in hand with optimization
+-> standard libraries don't work beyond some point
+
+*what is linear programming?
+-> minimizing a linear function with linear constraints
+
+*how do we apply linear programming to robust regression?
+-> break L1 loss into linear programming
+-> use |a| = max(a,-a)
+-> let a = wTx_i - y_i
+-> |wTx_i - y_i| = max(wTx_i - y_i, y_i - wTx_i)
+-> introduce some variable r_i
+-> r_i has to be larger than the thing it's replacing
+-> r_i >= max (a, -a)
+-> now set up minimization problem for w AND r
+-> w and r are linear objectives with non-linear constraints
+-> break down non-linear constraint into piecewise constraints
+
+*what are the steps for minimizing absolute values and/or maximums?
+-> replace absolute values with maximums
+-> replace maximums with new variables, introduce constraints
+-> transform linear constraints by splitting the maximum constraints
+
+*how do we use linear programming to get SVM loss optimized?
+-> SVM is quadratic program
+-> replace maximums with r_i, r_i >= max(0, 1 - yiwTx)
+-> break into two constraints
+
+*what does it mean Lp norm problem with p < 1 minimization is NP-hard?
+-> p < 1 is non-convex
+
+*what is convex combination?
+-> given w1, w2, w3, ..., wk, any point within the outmost boundary possible
+-> sum theta_c * w_c
+-> in case of two variables, theta * w + (1-theta) * v
+
+*what is convex set?
+-> if any point between two points within convex set stays in the set
+
+*what is the chord definition of convex functions?
+-> if function of convex combination is less than or equal to chord, function is convex
+-> chord is any line between the boundaries of epigraph
+
+*how do we use derivatives to determine convexity?
+-> in 1D case, second derivative is positive everywhere
+
+*how do we show norms are convex?
+-> let f be p-norm function
+-> use triangle inequality and absolute homogeneity
+-> then we end up getting the chord definition of convexity
+
+*what is affine map?
+-> convex function
+-> multi-input multi-output linear function
+-> f(w) = Aw + b
+
+*how do we get convex sets from convex functions?
+-> if g is a convex function than C is a convex set
+-> convex set is arguments s.t. g is convex
+-> if constraint lets g stay convex, constraint is convex
+
+*how do you show the convexity of linear constraints?
+-> linear constraints are intersections among convex sets
+
+*how do we show the convexity of twice-differentiable functions?
+-> must retrieve Hessian matrix
+-> Hessian must be positive semidefinite
+-> positive semidefinite means eigenvalues are non-negative
+-> v T A v is non-negative for all v for positive semidefinite A
+
+*show that least square problem is convex using Hessian
+-> Hessian is XTX
+-> use positive semidefinite property 2
+-> vT XTX v = (Xv)T(Xv) = norm(Xv,2)
+-> norms are convex
+
+*what is strict convexity?
+-> Hessian is positive definite anywhere
+-> L2 regularized least squares is strictly convex, because Hessian is XTX + lambda I
+-> strict convexity makes solution unique because there is no uniqueness
+
+*how do you show positive semi-definiteness of a hessian?
+-> vT Av >= vT Bv
+
+01/10
+
+=== Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate ===
+
+*what is the rule of thumb for choosing t in GD?
+-> t < max {d, d^2 / n}
+
+*what is Newton's method?
+-> computing hessian
+-> takes way less time than gradient descent
+-> if d is very large, gradient descent might be faster
+
+for probit, use gradient XTr
+r is a partial derivative vector
+functions in form f(Xw) always have gradient in form XTr
+f(Xw) leads to XT D X form hessian
+
+*how many iterations t of gradient descent do we need?
+-> t = O(1/epsilon) where epsilon is error bound
+
+
+*what is a "small enough" step size?
+-> 
+
+*what is Lipschitz continuous?
+-> gradient can't change arbitrarily fast
+-> gradients need to relate to one another in some way
+-> there exists an L s.t. for all w and v we have smaller difference in gradient than the distance times L
+-> if function is twice diffable, then eigenvalues of hessian must be below L, aka hessian should not explode
+-> for least squares, minimum L is the maximum eigenvalue of XTX
+-> using curvy < notation, vT H(f(u)) v <= L||v||2 for any u, v
+
+*what is the descent lemma?
+-> for any v, w, and convex combo u, f(v) is bound by 2nd order taylor expansion
+-> using Lipschitz, 2nd order term is bound by L||v-w||2
+-> f(v) <= f(w) + grad f(w) T (v-w) + L/2 ||v - w||2
+-> combine descent lemma with gradient descent formula with step size 1/L to get the proof of f's decrease
+
+*what does it mean descent lemma gives us a convex quadratic upper bound on f?
+-> adding the second order term will bound f with a parabola
+-> the minimum of the parabola is achieved with step size 1/L
+-> step size bound is 1/L
+
+*what is the guaranteed progress in gradient descent?
+-> if there's any margin between f(x) and minimum of 2nd order taylor with step size 1/L, guaranteed progress is the difference
+-> as long as step size is less than 2/L, f will decrease with gradient descent
+
+*why not use 1/L as step size?
+-> L is usually HUGE
+-> we can guestimate L instead
+-> instead of using 1/L every time, make it dynamic
+-> look ahead the next iteration with the current Lhat, check if bound is satisfied
+-> we want Lhat <<<<<< L
+ 
+*what are the three assumptions for computing number of iterations?
+-> Lipschitz continuous
+-> step size is 1/L
+-> function f has a lower bound f*
+
+*how do you compute the convergence rate of gradient descent?
+-> use the descent rate with step size 1/L
+-> we have an upper bound on the norm of the gradient at step k
+-> use the fact that norm is at least as big as their minimum
+-> use the telescoping sum
+-> use the lower f* bound to replace f(w^(t+1))
+
+01/12
+
+Last time: gradient descent step size and number of iterations needed. We use Lipschitz and call 1/L the best step size possible
+
+=== Rate of Convergence, PL Inequality, Strong Convexity ===
+
+*what is the squeezing argument?
+-> after t iterations, there is at least one iteration where the gradient is "small enough"
+-> small enough means O(1/t)
+-> if we take t = O(1/epsilon) then we will find some k satisfying <= epsilon bound
+-> total cost of gradient descent is O(nd/epsilon).
+
+*what does it mean the convergence rate is dimension independent?
+-> the convergence rate bound does not depend on d, the number of features
+
+*how do we know gradient descent finds a global optimum for convex functions?
+-> every local optimum is global optimum
+-> telescoping argument
+-> use f(w^t) - f(w^) = O(1/t) if there is a global optimizer w*
+-> f(w*) is optimal function value
+
+*what is the heavy ball method?
+-> extension of gradient method
+-> basically adding momentum to gradient
+-> swinging a heavy ball left and right until ball comes to stop
+-> gradient acts like pushing force
+
+*how does Nesterov's accelerated gradient method reduce the error to O(1/t^2)?
+-> ?????? 
+
+*what is iteration complexity?
+-> the smallest t such that our gradient is small enough
+-> how many iterations until guaranteed error epsilon?
+-> log(1/epsilon) is number of digits of accuracy we want, something like resolution
+-> is 1/epsilon good enough?
+-> number of iterations needed to achieve desired digits of accuracy is exponential time
+
+*what is rate of convergence?
+-> limit of the ratio of successive errors
+-> if error goes to 0 fast enough, that's a very good rate.
+-> similar to the definition of derivative
+-> if ro = 1, we have sublinear convergence rate, not good
+-> if ro = 0, we have superlinear convergence rate
+-> sublinear rate means performance decays
+-> superlinear rate means performance keeps getting better
+-> we want rate to be big big
+-> cost and rate are flipped. superlinear cost is bad
+ 
+*what rate and cost does an ideal algorithm achieve?
+-> superlinear rate at sublinear cost
+
+*what is Polyak-Lojasiewicz inequality?
+-> gradient grows as a quadratic function as we increase f
+
+*how do you show that PL implies linear rate gradient?
+-> use guaranteed progress bound with step size 1/L
+-> use definition of PL inequality to show that gradient times 1/2L is under certain threshold
+
+*how do you show that least squares has linear rate gradient?
+-> using PL inequality
+-> show the current difference is (1 - mu/L)^k * previous difference
+-> ro is close to 1, going down slowly
+-> PL inequality combined with interest rate inequality gives us a better bound: exp(-k mu/L)
+
+*what are two good properties of strongly-convex functions?
+-> unique solution
+-> C1 strong-convex satisfies PL inequality
+-> also, SC implies PL
+
+*how does strong convexity imply PL inquality?
+-> use taylor expansion
+-> convexity gives upper bound, strong convexity also gives lower bound
+
+*what is maximum suboptimality?
+-> strong convexity give you lower bound of f*
+
+*what does adding a L2 regularization do to convex loss function?
+-> make it strongly convex
+-> exponential O(1/epsilon) to polynomial O(log(1/epsilon)) time
+
+01/15
+
+=== Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient ===
+
+*what are the known flaws of L1 regularization?
+-> false positives
+-> non-unique solution
+-> convex but not strongly convex, unless f is strongly convex
+
+*what is a subgradient?
+-> similar to gradient but applied to nonsmooth, convex function
+-> subdifferential gives a set of subgradients, which are tangent lines at some point
+-> for each tangent line in subgradient set, f stays above the tangent line
+
+*why are there more than one subgradients in nonsmooth functions?
+-> in smooth case there can be only one tangent line
+-> in nonsmooth case we can have infinite number of tangent lines at the cusp
+
+*how do you compute subgradients?
+-> use sub-differential max
+-> easy parts: if one function is greater than the other, just use gradient of the greater function
+-> if they are equal, then use convex combination, aka chord definition
+-> this gives you subdifferential max
+-> use sub-differential sum
+-> pick any subdifferential from either, then subdifferential of sum is exactly the sum of subdifferential
+
+*why does L1 regularization give you sparsity?
+-> if we use L2 regularization, we need column x_j to be orthogonal to the residual r if w_j = 0 can be true
+-> if we use L1 regularization, we have subdifferential instead of gradient
+-> for w_j=0 to be true, we only need x_j and r to be "close to" orthogonal
+-> subdifferential for the L1 norm term is between -1 and 1
+
+*how do we apply subgradient to solve L1 regularization problem?
+-> instead of doing gradient descent, apply subgradient descent?
+-> unless we choose a good subgradient, objective will go up
+-> subgradients don't converge to 0 when approaching optimum
+-> subgradient descent sucks, although stochastic subgradient works
+-> DON'T use subgradient method
+
+subgradients suck
+
+*how do we generalize L1 regularized least squares?
+-> use F(w) = f(w) + r(w)
+-> f(w) is a smooth function
+-> r(w) is a simple function 
+-> pose a constraint on w and then use proximal gradient
+
+*what is projected gradient?
+-> gradient descent with constraints on w
+-> break one step into two half steps: between k to k+1 is k+1/2
+-> do gradient descent step first
+-> compute argmin_v ||v-w^(k+1/2)|| where v is in a set satisfying the convex constraint. this is projection onto the closest point in set C that satisfies the constraints
+-> then go towards the projection instead of the original gradient
+
+*how does projected gradient perform in convergence rate?
+-> at least as good as unconstrained gradient descent
+-> in smooth case, optimum is a set of fixed points for nonnegative step size
+
+*what are the three definitions of convexity?
+-> 0 order: chord definition
+-> first order: linear approximation with 0th and 1st taylor terms. function stays above any tangent line
+-> second order: Hessian is positive semi-definite
+
+*what do eigenvalues of a Hessian show?
+-> lambdas specify the magnitude of the curvature
+-> curvature is towards zero or positive the whole time, so there must be a global minimum
+-> if we have 2 by 2 hessian and one lambda is positive and one lambda is zero, then we have cylinder shape 
+
+01/17
+
+=== Proximal Gradient, Group Sparsity ===
+
+*what is the standard way of doing L1 regularization?
+-> group sparsity
+
+*how does minimization of quadratic approximation lead to projected gradient?
+-> complete-the-square technique
+
+*what is the main advantange of simple convex sets?
+-> easy to minimize smooth functions when constraints are simple convex (projection is cheap)
+-> linear time -ish
+
+*what is proximal gradient?
+-> minimizing smooth plus non-smooth function
+-> similar to projected gradient
+-> has better properties than projected gradient
+-> used in L1 regularization
+-> use proximal operator WRT alpha_k r(v)
+
+*what are the two conditions on r for proximal gradient to work?
+-> convex
+-> simple (proximal step is cheap)
+
+*what is nice about Lipschitz continuity in proximal gradient?
+-> guaranteed improvement
+-> separability
+
+*how is projected gradient a special case of proximal gradient?
+-> let r(w) be infinity if constraint is violated
+-> 0 otherwise
+
+*what does L1 regularization in softmax do?
+-> sparsity achieved
+-> W is sparse but no feature has beens selected
+
+*what is group sparsity?
+-> think W of softmax
+-> instead of random zeros throughout matrix, we want 0s to be consistent with the interpretation
+-> when we want sparsity but in a certain pattern
+
+*when do we want group sparsity?
+-> categorical features. we want levels to die together
+-> softmax
+
+*how do we achieve group sparsity?
+-> group L1 regularization
+-> we actually don't use L1 norm
+-> encourages sparsity in terms of custom select feature group G
+-> G is matroid-ish
+-> L1 is a special case of group L1 regularization using L2 norm non-squared, where each feature is its own group
+
+*how can sparsity come from L2 norm?
+-> L2 norm itself actually prefers sparsity
+-> squaring is what makes it non-sparse
+-> subdifferential of L2-norm is always leq 1
+
+01/19
+
+=== Structured Regularization, Regularization Path ===
+
+*what is a regularization path?
+-> w's value changes when lambda changes
+-> plot w vs. lambda
+-> in case of sparsity, we can show that w coefficients hit 0 as lambda increases
+
+*what does the regularization path of non-squared L2 regularization look like?
+-> all coefficients in group hit 0 together
+-> if we do infinity norm, coefficients become the same before hitting 0
+
+*how do we apply proximal gradient for L1 regularization?
+-> use weighted sum of nonsquared L2 norms as r
+-> this applies a soft threshold
+
+*what is total variation regularization?
+-> aka fused LASSO
+-> encourages slow and sparse changes in w
+-> super non-IID sequential data like time series or sequence
+-> make consecutive parameters have same value
+-> e.g. social regularization
+-> we could also penalize differences on graph
+
+*how does TV regularization help LFM?
+-> latent factors are more organized when TV reg is applied
+
+*how does inceptionism use TV reg?
+-> find image x that causes strongest activation of class c
+-> we want pixels to look similar to neighbors
+
+*what is nuclear norm regularization?
+-> try to make W a low rank matrix
+-> computation is faster
+
+*what is structured sparsity?
+-> variation of group L1
+-> encourages nonzero patterns where conditions for features are imposed
+-> lets us use ordering to impose patterns on sparsity
+-> lets us do sparsity only on off-diagonal elements in parameter matrix
+-> lets us make hierarchy and logical conditions on sparsity
+
+*how is structured sparsity used for face detection?
+-> any intersections of groups become zeros
+-> discover "unique features" for a label
+ 
+=== Summary: Non-Smooth Optimization ===
+
+*how do we do structured regularization with proximal gradient?
+-> TV: use Dykstra's algorithm
+-> inexact proximal gradient methods
+
+=== Transductive Learning, Label Propagation ===
+
+*what is transductive learning?
+-> special case of semi-supervised learning
+-> some labeled and some unlabeled examples
+-> goal is to label particular examples
+-> pretty common because getting labeled data is hard
+
+*how is transductive learning weird?
+-> care about error for our unlabeled examples rather than expectation of true test error
+
+*what is label propagation?
+-> graph based semi-supervised learning method
+-> define similarity as edge weight between parameters represented as nodes
+-> minimize total variation on the label space
+-> similar features means similar labels
+-> weighted loss between labeled and unlabeled examples, weighted regularization between unlabeled examples
+
+*how do we choose edge weights for label propagation?
+-> construct a KNN graph
+-> non-neighbor weights are 0
+-> neighbor weights are similarity between examples
+-> use some kind of kernel function to get the similarity
+
+*how does YouTube use label propagation to tag videos?
+-> construct a graph based on sequence of videos users watch
+-> use label propagation to tag all videos
+
+=== Coordinate Optimization ===
+
+*what is coordinate optimization?
+-> similar to stochastic gradient
+-> used in label propagation
+-> make iteration of gradient descent cheaper
+-> select one variable and compute gradient for tat
+-> hold unselected ones the same, selected one undergoes the change
+
+*what are good candidates for coordinate optimization?
+-> separable functions: if a function is sum of parts, in terms of each feature
+-> pairwise separable functions
+-> label propagation is a pairwise separable function
+
+*how does binary label propagation give you weighted average?
+
+*how do we show the convergence rate of coordinate descent algorithm?
+-> use descent lemma
+-> randomized case: take expectations and use linearity of expectation
+-> use definition of expectation and use uniform choice of j
+
+*what if f is strongly convex?
+-> recurse to get expectation
+-> coordinate step is larger than gradient step although the running time is same
+
+01/24
+
+
+*what is Lipschitz Sampling?
+-> in coordinate descent, consider each j having a different Lipschitz constant Lj
+
+*which method for coordinate selection works best?
+-> GSL, invented by Julie
+-> Gauss-Southwell
+-> choose coordinate that gives max magnitude gradient
+-> progress bound is in terms of infinity norm
+-> use max-heap for tracking gradient values
+
+*how do we use coordinate optimization for L1 regularization?
+-> coordinate optimization works even if separable term is non-smooth
+
+=== Stochastic Subgradient, Convergence Rate of SSG ===
+
+*what is finite-sum optimization?
+-> loss + regularizer framework is a special case of finite-sum optimization
+
+*what is deterministic gradient method?
+-> the gradients we've been seeing so far
+-> Cauchy, 1847
+
+*what is the difference between coordinate descent and stochastic descent?
+-> coordinate descent chooses column
+-> stochastic descent chooses row
+
+*how many iterations are needed for stochastic gradients?
+-> depends on the desired accuracy
+-> if accuracy doesn't matter much, run it for short time. it will perform better than deterministic
+
+*why are SVM and logistic losses good for stochastic gradient?
+-> rate of subgradient convergence is exactly same as deterministic in terms of number of iterations
+-> always use stochastic, because it's n times faster than deterministic
+
+*how do we show the convergence rate of stochastic gradient method?
+-> start with descent lemma
+-> compute expectation of f(w k+1)
+-> get guaranteed progress bound in terms of true gradient norm (good term) and row gradient norm (bad term)
+-> row gradient norm term is similar to variance. larger variance across rows is bad because if gradients are different expectation decreases
+-> PL inequality does not help because the bad term stays there
+
+*why is constant step size bad for stochastic subgradient?
+-> guaranteed bound's bad term B^2 does not go to 0 with k->inf
+
+01/26
+
+=== Stochastic Averaging Subgradient, Lazy Updates ===
+
+*what are the convergence conditions of stochastic gradient?
+-> sum of alpha should be infinity
+-> sum of alpha squared should be finite
+-> O(1/k) does it very well
+-> asymptotic result, not interesting
+
+*how are sparse matrices coded?
+-> instead of recording zeros, record <position> <value> <position> <value> ...
+
+*how does sparsity help with stochastic gradient method?
+-> cost reduction to O(z) for vector operations
+
+*why is L2 regularization bad in terms of sparsity?
+-> regularization term is full O(d)
+-> when d is huge, this will dominate running time of stochastic gradient even when we have sparsity
+-> we have to use lazy updates
+
+*what is lazy update?
+-> lets us track cumulative effects of simple updates
+-> assume constant step size
+-> if a feature has zero loss for 10 steps, you can treat it as multiplying a constant 10 times
+
+*how do we set the step size for stochastic gradient?
+-> as long alpha goes to zero, anything should work
+-> in practice, use a "fast" step size to approach to the ball
+-> once in the ball, slow down quite a bit
+-> use weighted average of all iteration k
+ 
+don't kill with AdaGrad
+
+*what is batching?
+-> choose a small number of examples to compute average gradient
+-> if we have a fixed batch size, convergence rate is sublinear
+-> if we grow batch size, convergence rate is linear
+
+*what is SAG?
+-> let's make the gradient approximation error go to 0
+-> compute gradient for every example we visit
+-> store a running sum of gradient and use it next time example is visited
+-> iterations take O(max{n, L/mu} log (1/eps)) for error bound epsilon
+-> at each iteration, choose one example, update it to current gradient, take step in the average of the whole
+
+01/29
+
+=== More Stochastic Gradient Methods ===
+
+*what is SVRG?
+-> stochastic variance reduced gradient
+-> O(d) storage instead of O(n)
+-> add a correction term for "control variate"
+-> without the control variate, exactly same as stochastic gradient
+
+*for infinite dataset, what are the two assumptions we must make?
+-> unbiased approximation of subgradient
+-> variance is bounded
+
+*what is test loss?
+-> expected value of approximate error function
+
+--- End of Part 1: Optimization ---
+
+--- Interlude 1 ---
+
+=== Kernel Trick ===
+
+*why L2 regularization?
+-> kernel trick works only for L2 regularization
+
+*what is Gaussian-RBF Kernel?
+-> k(xi, xj) = RBF(xi, xj)
+-> there is an awkward interaction term
+-> the interaction term expands infinitely using taylor expansion
+
+*how is kernel trick relevant to structured data?
+-> e.g. string kernel compares subsequences to get similarity between two words
+-> use dynamic programming for string kernel
+-> 
+
+01/31
+
+*what are valid kernels?
+-> must be an inner product in some space
+-> valid kernel is made of other valid kernels
+
+*which models allow kernel tricks?
+-> any distance based methods
+-> L2-regularized linear models
+
+*what is representer throrem?
+-> solution w* can be written as a linear combination of features if loss function is differentiable
+-> we can represent w = X T v
+-> substitute to get the kernelized version of a problem
+
+*what is multiple kernel learning?
+-> sum up different kernels
+-> find all v's to minimize the objective function
+
+*if the kernel lets us use infinite number of features, doesn't it overfit?
+-> features have to approach 0 eventually
+
+--- Part 2: Structured Prediction ---
+
+=== Structured Prediction, Density Estimation, Unsupervised Learning ===
+
+*what is structured prediction?
+-> output is not just scalar anymore
+-> context is captured
+-> look at the whole picture while maintaining part-wise interpretation
+-> look at the whole thing at once
+
+*what is the difference between structured prediction and supervised learning?
+-> e.g. density estimation
+-> interested in the probability of the data
+
+*why is density estimation the master problem in ML?
+-> solve density estimation then solve everything
+-> 
+
+*what is discriminative model?
+-> directly fit p(y|x)
+
+*what is discriminant functions?
+-> try to map from x to y
+
+02/02
+
+=== Discrete Distribtion, Continuous Distribution ===
+
+*what is the question we ask for density estimation?
+-> what is the probability of seeing feature vector xtilde^i as test data?
+
+*what is multinomial distribution?
+-> aka categorical distribution
+-> assume that each category has an odd of showing up
+
+*what is Laplace smoothing?
+-> add number of classes to numerator and denominator 
+-> Laplace smoothing for binary case is MAP estimate of beta prior
+-> Laplace smoothing for categorical case is MAP estimate under Dirichlet prior
+
+*how is beta prior related to MAP estimation with Bernoulli Distribution?
+-> Laplace smoothing is special case of MAP estimate of a beta prior with alpha and beta = 2
+-> beta is the conjugate prior to bernoulli likelihood
+
+*what are the assumptions we need for general discrete distribution?
+-> variables are independent. this is a very strong assumption
+-> aka naive bayes
+
+*why is Gaussian distribution nice?
+-> data might follow Gaussian
+-> CLT, mean estimators converge to Gaussian
+-> maximum entropy. makes the least assumptions
+-> MLE for mean is sample mean
+-> MLE for variance is sample covariance
+
+*why is Gaussian a bad idea?
+-> not robust to outliers
+-> Laplace and student's t distributions are more robust
+-> Gaussian is unimodal
+-> use mixture models for multimodal
+
+*how is the product of independent Gaussians a special case of multivariate Gaussian?
+-> it's consistent with the PDF of multivariate
+-> it's same as the PDF except the normalizer
+
+*what does independence among variables have to do with covariance?
+-> covariance matrix is diagonal if independent
+-> covariance ellipsoid lines up perfectly with axes
+-> if not, ellipse will be skewed
+
+*what does PCA have to do with covariance?
+-> PCA is a change of basis, very similar to how ellipse rotates to fit the data shape
+
+*what is the MLE of multivariate Gaussian?
+-> the mean vector is the average column vector
+
+02/02
+
+=== Properties of Multivariate Gaussian ===
+
+*what is precision matrix?
+-> inverse of covariance matrix
+
+*how do we get the MLE of multivariate gaussians?
+-> use precision matrix
+-> use cyclic property of trace
+-> exchange the sum and trace
+-> use NLL
+-> use the gradient of trace property: grad_x Tr(Sx) = S
+-> use the gradient of negative log determinant
+-> end up with covariance matrix being sample covariance
+-> end up getting mean vector being average column vector
+
+*how do we regularize multivariate gaussian?
+-> graphical LASSO to make off diagonals of theta sparse
+-> drawing precision matrix as a graph shows conditional independence
+
+*what does it mean multivariate Gaussian is closed?
+-> affine transformations, marginalization, conditioning, and product of Gaussian all result in multivariate Gaussian
+
+*what does affine transformation on multivariate gaussian do?
+-> affine transformation z = Ax + b still has a Gaussian distribution
+-> norm follows same affine transformation, covariance is affected only by A
+
+*how is marginal distribution of Gaussian related to affine transformation of multivariate Gaussian?
+-> marginal distribution is a special case of affine property
+-> ignoring a subset of variables gives a Gaussian 
+
+=== Mixture Models ===
+
+*how do we deal with multimodally distributed data?
+-> use mixture model
+-> mixture of Gaussians
+-> sum of Gaussians
+-> or more like average of gaussians
+-> can make it look bionomial or multinomial
+
+*how does MM help Gaussian be more robust?
+-> clusters can be detected with MM
+-> even if there are more Gaussians than clusters, we can still identify clusters correctly
+
+*what is expectation maximization?
+-> general methods for fitting models with hidden variables
+-> treat cluster as hidden variable
+
+02/07
+
+*what is the definition between linear and convex combinations?
+-> they are pretty similar
+-> convex guys have to be nonnegative and sum up to 1
+-> any kind of multinomial is convex combination
+
+*how can density estimation be used for image recognition?
+-> training a density estimator should let us generate images by sampling from the distribution
+
+*why is independent Bernoulli model for image training a bad idea?
+-> independent distribution makes a strong assumption
+-> misses dependencies between pixels
+
+*what is general discrete distribution? why is it bad for digit recognition?
+-> get rid of independence assumption
+-> now each possible object state rather than feature state has a probability
+-> only memorizes images and overfits crazy
+
+mixture of bernoullis
+
+*how does mixture of independent Bernoullis model dependencies?
+-> whenever there is 0 probability
+-> 
+
+=== Learning with Hidden Values ===
+
+*what do you always ask about missing values?
+-> why is the data missing???
+-> is missing at random, we can do statistical methods
+-> missing at completely random is even better
+
+*what is imputation approach?
+-> train: fit a density model with complete examples
+-> impute: replace each ? with most likely value
+-> estimate: fit model with these imputed values
+
+*how do you use block coordinate optimization for missing values?
+-> alternate between imputation and estimation steps
+
+*how are MAR and SSL related?
+-> SSL is a special case of MAR
+
+*how do you use imputation for SSL?
+-> self-taught learning
+-> guess the missing y values and fit
+-> repeat
+
+*why do we introduce MAR variables for MM?
+-> n gaussians, then introduce n variables (dummy)
+-> let z i tell you which Gaussian generated example i
+
+*how are kmeans and mixture of Gaussians related?
+-> mixture of Gaussians with identity covariance
+-> that's exactly kmeans
+
+*what are the drawbacks of imputation approach?
+-> mistakes are going to stick around
+-> propagation error
+-> better way: do soft assignment rather than hard assignment
+-> aka probabilistic way
+
+02/09
+
+=== Expectation Maximization ===
+
+*what is the difference between parameters, hyper-parameters, and nuisance parameters?
+-> nuisance parameters are not part of the model. we can integrate over nuisance parameters as an alternative to imputation
+-> parameters are variables in our model
+-> hyperparameters are variables that control model complexity
+
+*what is EM? what is it used for?
+-> optimization for MAR values
+-> notation: O for observed variables, H for hidden variables
+
+*what's painful about optimizing complete likelihood?
+-> NP hard
+-> sum inside log
+
+*what is a complete likelihood?
+-> assume p(O,H | theta) for likelihood, aka complete likelihood
+-> sum over H, get p(O | theta)
+
+*how does EM work? what does it maximize?
+-> iterative algorithm
+-> every step must use approximation of NLL with fudge value alpha specified
+-> there are two steps; E step and M step
+
+*what is the E-step?
+-> define expectation of complete log likelihood given previous iteration's parm
+-> O is fixed
+-> log p(O,H | theta) acts like a RV that depends on H
+-> get conditional expectation
+
+*what is the M-step?
+-> maximize the expectation defined by E-setp
+
+*what is the difference between hard EM and soft EM?
+-> in hard EM, fudge alpha is 1
+-> in soft EM, fudge alpha is p(H | O,theta t)
+
+=== EM for MM ===
+
+*how does mixture model work with EM?
+-> recall that z is the hidden variable: cluster assignment
+-> namely, z_i is 1 if datapoint belongs to distribution i, 0 otherwise
+-> effectively becomes a weighted version of usual likelihood
+
+*what is responsibility?
+-> E step copmutes responsibilites
+-> posterior probability of assigning a value to z given data and parameters
+
+=== Convergence of EM ===
+
+02/14
+
+*when is EM useful?
+-> for fitting mixture models
+-> when likelihood is complete
+
+*how do we show that EM iterations are monotonic?
+-> look at the picture
+-> "original function" is the negative log likelihood without hidden parameters
+-> the Q function gives us a global bound on the original function
+-> current iteration is when bound matches the original function
+
+*what is negative entropy?
+-> low entropy means low variance
+-> shows relationship between EM's Q function and the original
+-> NLL is upper bound by Q - entropy
+
+*what does the monotonicity of EM imply?
+-> we improve the objective by at least the decrease in Q
+-> EM actually converges
+
+*what are the two bounds required to show that we improve the objective by improving Q?
+-> log likelihood WRT original theta is lower bound by current Q
+-> log likelihood WRT current theta is equal to current Q 
+
+=== Kernel Density Estimation ===
+
+*how do we define a non-parametric mixture model?
+-> one mixture for every training example j
+-> each example gets a Gaussian distribution
+-> then p(x) is the sum of Gaussians
+
+*how does KDE generalize histogram?
+-> KDE is nonparametric mixture model
+-> histogram is square
+-> KDE is mounds
+
+*what does kernel mean in KDE?
+-> PDF with bandwidth
+-> sigma is also standard deviation
+
+*what is the relationship between KDE and RBF?
+-> KDE is similar to RBS that it considers the distance between examples
+-> KDE is a special case of RBF regression where weights are 1/n
+
+*how are kmeans and EM similar in terms of initialization?
+-> both are sensitive to initialization
+
+*is NLL better when lower or higher?
+-> lower NLL means better estimation
+-> notice MLE minimizes NLL
+
+*what is the application of KDE?
+-> mean-shift clustering
+-> does gradient descent on likelihood
+-> vector quantization
+-> not sensitive to initialization, no need to choose k
+-> similar to DBSCAN
+
+*what is the relationship between PCA and probabilistic PCA?
+-> probabilistic PCA is a continuous mixture model with Gaussian assumptions
+-> when variance is 0, regular PCA pops out
+
+02/16
+
+=== Mixture-Model Wrap-Up ===
+
+*what is factor analysis?
+-> similar to PCA
+-> except it's probabilistic
+
+*what is ICA?
+-> independent component analysis
+-> joint distribution over z is product of independent feature distributions
+
+*what is BSS?
+-> blind source separation
+-> given mixture of sounds, identify all sounds
+-> use ICA
+-> if scores are not Gaussian, we can identify the sources
+
+--- End of Part 2: Generative Models ---
+
+=== Markov Chains ===
+
+*what is a markov chain?
+-> density model for data with sequential correlation
+-> gets rid of position independence assumption
+
+*what are the ingredients for Markov Chains?
+-> state space: set of possible states
+-> initial probabilities, transition probabilities
+-> assumption: meaningful ordering of features
+-> markov chain models dependency of each feature on the previous feature
+-> used in time series models all the time
+
+*what is a homogeneous markov chain?
+-> probability is exactly the same for each transition
+-> special case of parameter tying where different parts of the model uses the same parameter
+
+*how is MC used in MNIST digits?
+-> homogeneous Markov chain defined over rows is not very useful although some adjacency is captured
+-> inhomogeneous MC may be a lot more useful
+-> inhomogeneous has different transition probabilities for each timestamp
+-> transition between the same states between time t0 and time t1 is different
+
+02/26
+
+=== Sampling, Monte Carlo ===
+
+*how is inverse CDF related to binary search?
+-> given the probability value u, find the RV value that generates u
+-> use the fact that CDF is monotonically increasing
+
+*how do we sample from a multivariate Gaussian?
+-> use affine property
+-> sample from standard MV normal
+-> MV normal samples each feature independently from standard normal
+-> transform the generated sample by adding mu and multiplying by A
+-> use Cholesky to get AAT = sigma
+
+*what is chain rule of probability?
+-> aka factorization of joint distribution
+-> use definition of conditional probability to break a joint distribution into a product of conditional probabilities
+-> eventually we have conditional probabilities of decreasing size until we have a marginal term
+
+*what is ancestral sampling?
+-> use chain rule of probability to get joint distribution
+-> easy if conditional probabilities are given or easy to compute
+-> sample one feature at a time
+-> in Markov chains, use Markov property to only depend on sequentially previous variables
+-> sampling from Markov chain refers to modeling joint distribution using chain rule with Markov property
+
+*what is inference?
+-> answering probability query
+-> 3 problems: decoding, marginal probability, conditional probability
+-> e.g. P(x_j = c) is a marginal inference
+-> in sequential data, marginal inference actually involves two terms: time step and value
+
+*how is inference more difficult for Markov chain?
+-> if we assume dependence, conditional inference is reduced to marginal inference
+
+*what is a Monte Carlo method?
+-> rather than representing a distribution using parameters, maintain a big big set of examples to represent the distribution in an approximate way
+-> some inference problems become simplified as counting
+-> more precisely, approximate expectation of random functions using the set of examples
+
+*how is probability and mean estimate a special case of Monte Carlo?
+-> recall that expectation of a function on a random variable looks like E[g(X)]
+-> in discrete distributions, E[g(X)] is sum of g(X)P(X) over domain of X
+-> in Monte Carlo, this is approximated by first applying the function to all samples and averaging the output
+-> mean is a special case where g(X) = X
+-> probability is a special case where g(X) = I(A | X)
+
+02/28
+
+*how do we do exact marginal on Markov Chain?
+-> use marginalization rule but reverse it
+-> P(x2) = sum of P(x1, x2) over domain of x1
+-> then use definition of conditional probability
+-> P(x1, x2) = p(x2 | x1) p(x1)
+-> aka Chapman-Kolmogorov
+
+=== PageRank Algorithm, Decoding, Message Passing ===
+
+*how is Monte Carlo a special case of stochastic gradient?
+-> O(1/t) convergence rate
+
+*what makes a Markov chain ergodic?
+-> irreducible
+-> aperiodic
+
+*what is decoding?
+-> find assignment that has highest joint probability for Markov Chain
+-> decoding is the "MLE" analog of producing an example
+-> in MLE, you talk about parameters. in decoding, you talk about examples while parameters are given
+-> maximizing marginals and decoding are subtly different because states are dependent
+-> decoding can't be done forward in time
+-> must maximize each state individually in topological order, over the product of transition probabilties
+-> at least one transition throws off the max computation. use memoization over all possible values in this case
+
+*what is message passing?
+-> something to help with decoding and probability operations with markov chains
+-> memoization of solution containing variable that can't be maximized naturally
+-> a message is probability
+-> dynamic programming with each message being a DP entry
+-> used in Viterbi decoding, a greedy(?) DP
+-> Viterbi is allowed to be greedy thanks to Markov property
+
+*how do we compute unknown transition probabilities?
+-> Monte Carlo approach
+-> use definition of conditional probability
+-> also a special case of rejection sampling
+-> in case of Gaussian and discrete, we can use Viterbi decoding to compute transitions
+-> use message passing and Markov property to sum over paths
+
+03/02
+
+*how does message passing generalize Markov chain models?
+-> Mj summarizes all relevant information UP TO time j
+-> backward message Vj works as well
+-> start by defining Vd = 1, start summarizing with Vs
+-> finding M and V are called forward backward algorithm
+
+=== Directed Acyclic Graphical Models, D-Separation ===
+
+*what do we do about Markov property being too strong?
+-> higher-order Markov chain: make dependency more relaxed
+-> DAG model generalizes the higher-order Markov chain. the product rule of probability holds for any distribution
+-> DAG model has 2^d parameters to find
+-> we can reduce the number of parameters by making dependence restricted to logical parent features of a feature
+-> Markov chain is a special case where each node has exactly one parent
+-> Naive Bayes is a special case where the result label y is the parent of every feature
+-> mixture model is a special case where the cluster z is the parent of every feature
+-> Gaussian mixture model treats all features grouped into one node
+
+*how does DAG model joint distributions?
+-> by product rule
+-> aka belief network
+
+*what is D-separation?
+-> aka conditional independence
+-> DAG makes conditional independence assumption
+-> conditional independence can imply a lot of assumptions
+-> independence means joint probability is product of probabilities
+-> independence also makes p(a,b) = f(a)g(b) true
+-> independence implies pairwise independence between variables
+-> in mixture of Bernoullis, xi is not independent of xj. but they are conditionally independent given z. covariance matrix of xs should show non-diagonal
+-> conditional independence means joint probability conditional on z is product of probabilities conditional on z
+-> conditional independence can determine whether message passing is efficient
+-> d-separation takes graphs to conditional independence
+-> d-separation can tell the independence by looking at paths and arrow directions
+-> in gene inheritance, knowing parents' gene makes grandparent's gene useless
+-> grandparent and me are dependent, but conditionally independent given parent
+-> siblings are dependent, but conditionally independent given parent
+-> parents are independent, but conditionally dependent given child. this is aka v-structure.
+-> parents are independent, but conditionally dependent given descendants.
+
+03/05
+
+=== D-Separate and Plate Notation ===
+
+*how do you tell conditional independence from looking at DAG?
+-> consider observation as placing a blockade
+-> if a path is blocked, things are conditionally independent
+-> path through parent is permitted
+-> path through child's other parent is prohibited
+
+*does D-separation imply conditional independences?
+-> depends on distribution
+-> different orderings can reveal different independences
+-> some different graphs can imply the same conditional independence
+-> we cannot simply reduce conditional independence into linear time graph search
+-> using d-separation with blurred lines
+
+*how do we turn distributions into DAG?
+-> response is the child of parameters and data
+-> if response is not observed, then parameter and data are independent
+-> this is according to discriminative assumption
+-> IID assumption considers a stochastic process D that creates datapoints
+-> not observing D means datapoints are IID
+-> use plate notation to represent all datapoints in one node
+-> regression is a DAG with parameter tying on w vs. all ys
+
+*what is tabular parametrization?
+-> using conditional independence, we can model the joint distribution as product of conditional distributions
+-> conditional distributions 
+-> generalization of transition probability of Markov chain
+-> model conditional probability by counting
+-> requires a lot of parameters
+-> reduce this to p(y | x) problem
+-> fit p(x_j | x_(pa(j))) using the same
+-> use any kind of supervised learning methods for probabilistic interpretation
+-> using LS, it becomes Gaussian belief networks
+-> using logistic regression, becomes sigmoid belief networks
+-> no need for Markov assumptions
+
+*how do you model marginal distribution in general DAGs?
+-> same as Markov chain: message passing
+-> however, number of variables to look at is exponential in number of possible parents
+-> aka branching factor is going to screw us up
+-> decoding is NP-hard
+-> ancestral sampling to the rescue
+-> however, Monte Carlo methods have bad convergence rate
+
+03/07
+
+=== DAG Structure Learning ===
+
+*how does structure learning reduce to feature selection?
+-> if ordering is given
+-> select the features that best predict x_j 
+-> construct all possible DAGs, use BIC to score the structure
+-> search through all possible DAGs. very very hard
+-> exponential number of possible graphs
+
+*what is the difference between directed and undirected graphical models?
+-> in both directed and undirected graphical models, the edges are known
+-> undirected graph is useful when there is no logical ordering between features
+-> undirected model is aka Markov Random Fields
+-> undirected models include Ising, pairwise UGMs, 
+-> in pairwise UGM, there are phi functions named potential functions. there is no ordering between features. Ising model is special case of pairwise UGM where phi functions are exponential functions
+-> find MLE w
+-> label propagation is also special case of pairwise UGM
+-> graphical lasso is an undirected graphical model that has underlying multivariate gaussian distribution. apply L1 regularization to precision matrix and enforce the positive definite constraint
+
+*how is D-separation applied to UGMs?
+-> conditional independence between two features is when condition doesn't block the path between the two
+
+*how is multivariate gaussian a special case of pairwise UGM?
+-> precision matrix has nonzero element indicates edge
+-> GGM, GMRF imply some sparsity
+-> nonzero covariance matrix indicates independence
+-> nonzero precision matrix indicates conditional independence given all other features
+
+*how do you solve for MLE for UGM?
+-> find the Z that makes the sum of all probabilities 1
+-> everything is NP-hard
+
+03/09
+
+*what are some inference tasks for graphical models?
+-> probability of assignment
+-> sampling
+-> marginal, decoding, conditional probabilities
+
+
+*how do we convert DAG to UGM?
+-> replace d-edges with u-edges
+-> marry the parents of a v-structure child
+
+=== Exact Inference in UGM, ICM and Gibbs Sampling ===
+
+*how do we solve inference problems for graphical models?
+-> exact and approximate
+-> exact involves message passing
+-> approximate involves sampling
+
+*what is belief propagation?
+-> forward-backward algorithm generalized to UGM trees
+-> use multi-argument message passing
+-> be careful about the direction of the computation
+-> finding the optimal direction of computation is NP-hard
+
+*what is the problem with message passing for exact inference in UGM?
+-> number of messages depends on variable ordering and graph structure
+-> computationally not feasible
+
+*what is ICM?
+-> iterative conditional mode
+-> approximate decoding for UGM
+-> each iteration is a coordinate optimization
+-> choose one feature, fix all else, find the mode of conditional p(x_j | x_-j^k) and put that as the value of x_j^(k+1)
+-> we don't need to know Z in order to find argmax
+-> efficient because objective f(x) is made of separable function + pairwise separable function
+
+*why does ICM not find the global optimum?
+-> decoding is non-convex
+-> must use globalization methods in conjunction
+-> like random restarts
+-> simulated annealing, genetic algorithms, ant colony optimization, etc.
+
+*what is the difference between ICM and Gibbs Sampling?
+-> ICM is a decoding algorithm
+-> GS is a sampling algorithm
+-> ICM is approximate decoding
+-> GS is approximate sampling
+
+*what is Gibbs Sampling?
+-> approximate sampling from UGM
+-> sample x_j value from conditional probability
+-> model x_j's conditional probability by doing coordinate optimization but maintain counts
+-> if we know conditional probability p(x_j | x_-j) for each x_j, then we can sample the whole sequence without knowing the joint distribution
+-> sample the sequences using Gibbs Sampling
+-> choose variable j at random, update x_j by sampling from conditional
+
+*what is the relationship between Gibbs Sampling and MCMC?
+-> sometimes ancestral sampling is not available
+-> Gibbs Sampling to get sequences instead (approximate sampling)
+-> use the results of Gibbs Sampling with Monte Carlo estimator
+-> Gibbs Sampling generates samples from a homogeneous Markov chain that has stationary distribution
+-> Gibbs Sampling gets states from state space defined by all possible sequences
+
+03/12
+
+*what are burn in and thinning?
+-> don't look at all monte carlo samples
+-> through the first few to allow for fairer representation of distribution
+-> thinning is when you look at every k examples
+
+=== Block Approximate Inference === 
+
+=== Parameter Learning in UGM ===
+
+*how do we learn the phi functions?
+-> assume that phi functions depend on parameters w
+-> looking at data, we should get MAP estimate w
+-> we need to know the likelihood of data first
+-> consider the case where phi is exponential
+-> introduces log-linear model
+
+03/14
+
+=== Frank Wood: Probabilistic Programming ===
+
+03/16
+
+=== HMM and Boltzmann Machines ===
+
+*how do we use deep learning for unsupervised learning?
+-> human learning is usually unsupervised
+-> deep belief networks
+-> HMM
+-> Boltzmann machines
+
+*what is Boltzmann machine?
+-> UGMs with binary latent variables
+-> can be used to train deep belief networks
+-> hard to learn, so used restricted boltzmann machine
+-> in restricted boltzmann, edges are only between x and z
+
+*what does it mean to do block Gibbs sampling up and down on RBM?
+-> select a layer of interest
+-> we can condition on layers on top and at bottom
+-> we can use conditional independence to sample the values of the layer using Gibbs sampling
+
+=== Conditional Random Fields ===
+
+*what are the 3 classes of structured prediction methods?
+-> generative models
+-> discriminative models: view structured prediction as conditional density estimation
+-> discriminant models
+
+=== Neural Networks ===
+
+03/21
+
+=== Backpropagation ===
+
+*what is backpropagation?
+-> compute one gradient and use it for message passing
+-> can be formulated as forward backward
+-> forward messages are z values
+-> backward message are partial derivatives with chain rule
+-> partial derivatives boil down to h()f'()
+
+*what is conditional neural fields?
+-> CRF + NN
+-> recall CRF is UGM
+-> recall CRF tries to tell the model correlation among multivariate responses
+-> instead of logistic regression, use neural network
+-> then you have CNF
+-> in CNF, belief propagation happens with backpropagation
+-> used for gesture recognition
+
+Example: gesture recognition
+
+*how do we use conditional random fields for gesture recognition?
+-> similar to HMM
+-> modeling probability of video given hidden label is hard
+-> hidden CRF
+
+=== Region CNN ===
+
+Example: object localization
+
+*what is an end-to-end system?
+-> computer vision models
+-> each step as differentiable operator
+-> train all steps with backprop and SGD
+
+*how do we enforce contiguity between labels at the final layer?
+-> used to be graphical network
+-> hopefully complex enough CNN will learn the contiguity
+-> use fully convolutional neural networks
+
+=== Recurrent Neural Networks ===
+
+*what is the problem with state-space models?
+-> inference doesn't have close form except Kalman or HMM
+-> memory is limited: only one state is tracked at a time. probably need multi-dimensional hidden states, e.g. restricted Boltzmann machine. this makes inference even harder
+-> RNN makes inference easier. at time t, hidden state z_t is a deterministic transformation of time t-1
+
+*what is RNN?
+-> similar to HMM
+-> instead of stochastic transformations, have deterministic transformations
+-> z0 is like a random seed
+-> z1 = f(z2), and f is the same for every z
+-> each hidden state can be vectors
+-> each zj is a neural network
+
+*what is sequence to sequence learning?
+-> input sequence is translated into output sequence, one to one
+-> requires input and output to be of same length
+-> often use parameter typing with encode/decode to allow different sequence lengths
+-> encoder learns from data, decoder uses information to spit output
+
+*how do we deal with vanishing gradient in RNN?
+-> gradient clipping
+-> long short term memory
+
+*what is LSTM?
+
+03/26
+
+=== Bayesian Inference ==
+
+*how do we learn prior from data?
+-> must have hyper parameter
+-> cross validation is same as learning prior
+-> or use empirical bayes
+-> empirical bayes will optimize marginal likelihood
+-> marginal likelihood is highest for true p in polynomial basis learning
+-> BIC is an approximation of marginal likelihood
+
+*how do we do hypothesis testing with bayesian inference?
+-> use bayes factor
+-> bayes factors still don't solve problems with p-values and multiple testing
+-> however, bayes factor is easier and simpler
+
+1 WEEK OUT FROM PRES
+
+03/28
+
+*what is ARD?
+-> ARD is L2 regularization in Bayesian framework
+-> L2 regularization but yields a sparse solution
+
+*what is type 2 maximum likelihood?
+-> hyperparameter tuning method
+-> use Bayesian posterior prediction to optimize any hyperparameter
+-> involves optimizing over p(y | X, lambda) which involves integral over w
+-> e.g. RBF kernel parameter, k in k means clustering, number of states in hidden Markov model, number of latent factors in PCA...
+-> if there is closed form for the integral, using type 2 magically works
+
+*how is Bayesian inference easier with conjugate priors?
+-> marginal likelihood is easy to compute: ratio of normalizing constants
+-> posterior predictive is (often) nice
+
+*what is the difference between MAP and posterior predictive?
+-> posterior predictive is P(H|HHH), aka probability of next thing given data
+-> MAP optimizes parameter
+
+*what is the effect of beta prior?
+-> beta prior reflects how many positive and negative labels have been observed
+
+*what is improper prior?
+-> improper prior does not integrate to 1
+-> improper prior can express extreme uncertainty
+
+*what are some conjugate priors?
+-> beta - bernoulli
+-> Gaussian - Gaussian
+-> conjugate priors exist only for exponential family likelihoods
+-> in low dimensional case, Bayesian inference can rely on numerical integration
+
+*how is logistic regression related to Bernoulli distribution?
+-> using log-odds
+-> p(x | theta) becomes logistic sigmoid function
+
+04/04
+
+=== Topic Models ===
+
+Last time: empirical bayes, hierarchical bayes
+
+*how do we represent hierarchical bayes as a graphical model?
+-> hyperparameters should be parents of real parameters
+
+*when are hyperpriors necessary?
+-> non-IID data, where each datapoint comes from its own parameter
+-> dependency between the parameters can be established only after hyperprior is given
+
+*what is a topic model?
+-> similar to LFM
+-> call latent factor a "topic"
+
+*what is latent semantic indexing?
+-> use TF-IDF
+-> run PCA on TF-IDF
+-> replaced by latent drichlet allocation
+-> LDA uses hierarchical bayesian model of all words
+
+*what is LDA?
+-> latent dirichlet allocation
+-> involved version of latent semantic indexing
+-> a topic model
+-> put prior on topic proportions
+
+*what is the problem with mixture models?
+-> can't associate with more than one topic
+
+=== Rejection and Importance Sampling ===
+
+*how do we deal with no-closed-form posterior expressions?
+-> approximate inference
+-> use variational methods or monte carlo methods
+
+*what does it mean Gibbs sampling is an approximate sampler?
+-> neighbors are conjugate in UGMs
+-> generate "conditional samples"
+
+*what is MCMC?
+-> design a markov chain whose stationary distribution is the posterior
+-> use rejection and importance sampling to get samples from posterior
+-> our parameters follow some posterior distribution
+-> we model the posterior distribution by using a Markov chain
+-> consider each state being a possible configuration of parameters
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

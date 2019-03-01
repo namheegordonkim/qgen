@@ -1,0 +1,101 @@
+1. how does inceptionism use TV reg? (Structured Regularization, Regularization Path)
+-> find image x that causes strongest activation of class c
+-> we want pixels to look similar to neighbors
+
+2. what is imputation approach? (Learning with Hidden Values)
+-> train: fit a density model with complete examples
+-> impute: replace each ? with most likely value
+-> estimate: fit model with these imputed values
+
+3. what is deterministic gradient method? (Stochastic Subgradient, Convergence Rate of SSG)
+-> the gradients we've been seeing so far
+-> Cauchy, 1847
+
+4. what is ICM? (Exact Inference in UGM, ICM and Gibbs Sampling)
+-> iterative conditional mode
+-> approximate decoding for UGM
+-> each iteration is a coordinate optimization
+-> choose one feature, fix all else, find the mode of conditional p(x_j | x_-j^k) and put that as the value of x_j^(k+1)
+-> we don't need to know Z in order to find argmax
+-> efficient because objective f(x) is made of separable function + pairwise separable function
+
+5. how is Monte Carlo a special case of stochastic gradient? (PageRank Algorithm, Decoding, Message Passing)
+-> O(1/t) convergence rate
+
+6. what is the effect of beta prior? (Recurrent Neural Networks)
+-> beta prior reflects how many positive and negative labels have been observed
+
+7. how do you show positive semi-definiteness of a hessian? (Convex Optimization, Linear Programming)
+-> vT Av >= vT Bv
+
+8. how do we achieve group sparsity? (Proximal Gradient, Group Sparsity)
+-> group L1 regularization
+-> we actually don't use L1 norm
+-> encourages sparsity in terms of custom select feature group G
+-> G is matroid-ish
+-> L1 is a special case of group L1 regularization using L2 norm non-squared, where each feature is its own group
+
+9. what is SVRG? (More Stochastic Gradient Methods)
+-> stochastic variance reduced gradient
+-> O(d) storage instead of O(n)
+-> add a correction term for "control variate"
+-> without the control variate, exactly same as stochastic gradient
+
+10. what is the definition between linear and convex combinations? (Mixture Models)
+-> they are pretty similar
+-> convex guys have to be nonnegative and sum up to 1
+-> any kind of multinomial is convex combination
+
+11. how do we show the convergence rate of stochastic gradient method? (Stochastic Subgradient, Convergence Rate of SSG)
+-> start with descent lemma
+-> compute expectation of f(w k+1)
+-> get guaranteed progress bound in terms of true gradient norm (good term) and row gradient norm (bad term)
+-> row gradient norm term is similar to variance. larger variance across rows is bad because if gradients are different expectation decreases
+-> PL inequality does not help because the bad term stays there
+
+12. what is a complete likelihood? (Expectation Maximization)
+-> assume p(O,H | theta) for likelihood, aka complete likelihood
+-> sum over H, get p(O | theta)
+
+13. how do we form the data matrix X? (Introduction)
+-> examples are not row vectors anymore.
+-> examples are column vectors
+-> X is formed by transposed column vectors instead of row vectors
+
+14. what is the M-step? (Expectation Maximization)
+-> maximize the expectation defined by E-setp
+
+15. what is Laplace smoothing? (Discrete Distribtion, Continuous Distribution)
+-> add number of classes to numerator and denominator
+-> Laplace smoothing for binary case is MAP estimate of beta prior
+-> Laplace smoothing for categorical case is MAP estimate under Dirichlet prior
+
+16. what does independence among variables have to do with covariance? (Discrete Distribtion, Continuous Distribution)
+-> covariance matrix is diagonal if independent
+-> covariance ellipsoid lines up perfectly with axes
+-> if not, ellipse will be skewed
+
+17. why study optimization? (Convex Optimization, Linear Programming)
+-> size of the dataset and size of the model
+-> large scale machine learning goes hand in hand with optimization
+-> standard libraries don't work beyond some point
+
+18. how do you compute subgradients? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+-> use sub-differential max
+-> easy parts: if one function is greater than the other, just use gradient of the greater function
+-> if they are equal, then use convex combination, aka chord definition
+-> this gives you subdifferential max
+-> use sub-differential sum
+-> pick any subdifferential from either, then subdifferential of sum is exactly the sum of subdifferential
+
+19. what is structured prediction? (Structured Prediction, Density Estimation, Unsupervised Learning)
+-> output is not just scalar anymore
+-> context is captured
+-> look at the whole picture while maintaining part-wise interpretation
+-> look at the whole thing at once
+
+20. what is LDA? (Topic Models)
+-> latent dirichlet allocation
+-> involved version of latent semantic indexing
+-> a topic model
+-> put prior on topic proportions

@@ -1,0 +1,39 @@
+1. how does inceptionism use TV reg? (Structured Regularization, Regularization Path)
+
+2. what is imputation approach? (Learning with Hidden Values)
+
+3. what is deterministic gradient method? (Stochastic Subgradient, Convergence Rate of SSG)
+
+4. what is ICM? (Exact Inference in UGM, ICM and Gibbs Sampling)
+
+5. how is Monte Carlo a special case of stochastic gradient? (PageRank Algorithm, Decoding, Message Passing)
+
+6. what is the effect of beta prior? (Recurrent Neural Networks)
+
+7. how do you show positive semi-definiteness of a hessian? (Convex Optimization, Linear Programming)
+
+8. how do we achieve group sparsity? (Proximal Gradient, Group Sparsity)
+
+9. what is SVRG? (More Stochastic Gradient Methods)
+
+10. what is the definition between linear and convex combinations? (Mixture Models)
+
+11. how do we show the convergence rate of stochastic gradient method? (Stochastic Subgradient, Convergence Rate of SSG)
+
+12. what is a complete likelihood? (Expectation Maximization)
+
+13. how do we form the data matrix X? (Introduction)
+
+14. what is the M-step? (Expectation Maximization)
+
+15. what is Laplace smoothing? (Discrete Distribtion, Continuous Distribution)
+
+16. what does independence among variables have to do with covariance? (Discrete Distribtion, Continuous Distribution)
+
+17. why study optimization? (Convex Optimization, Linear Programming)
+
+18. how do you compute subgradients? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+19. what is structured prediction? (Structured Prediction, Density Estimation, Unsupervised Learning)
+
+20. what is LDA? (Topic Models)

@@ -1,0 +1,553 @@
+1. what is x~? (Introduction)
+
+2. how do we form the data matrix X? (Introduction)
+
+3. what is a loss plus regularizer framework? (Introduction)
+
+4. what are non-linear effects? (Introduction)
+
+5. what is the formal definition of test error? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+6. what is the difference between test set error and test error? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+7. why is golden rule important in terms of test set error? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+8. why are typical supervised learning steps bad? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+9. why is it important for data to be IID? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+10. what does Hoeffding's inequality tell us about validation error? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+11. how does k (number of hyperparameters) and t (number of training examples) relate? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+12. what is the effect of k on fixed t? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+13. what is generalization error? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+14. what is a deterministic model? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+15. what is a learning problem? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+16. what is NFL theorem? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+17. what is Ebest? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+18. what is the refined fundamental trade-off? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+19. what is universal consistency? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+20. what is the difference between parametric and non-parametric models in terms of Etest? (Supervised Learning Notation, Fundamentals of Learning, Generalization Error, K-Nearest Neighbors)
+
+21. why study optimization? (Convex Optimization, Linear Programming)
+
+22. what is linear programming? (Convex Optimization, Linear Programming)
+
+23. how do we apply linear programming to robust regression? (Convex Optimization, Linear Programming)
+
+24. what are the steps for minimizing absolute values and/or maximums? (Convex Optimization, Linear Programming)
+
+25. how do we use linear programming to get SVM loss optimized? (Convex Optimization, Linear Programming)
+
+26. what does it mean Lp norm problem with p < 1 minimization is NP-hard? (Convex Optimization, Linear Programming)
+
+27. what is convex combination? (Convex Optimization, Linear Programming)
+
+28. what is convex set? (Convex Optimization, Linear Programming)
+
+29. what is the chord definition of convex functions? (Convex Optimization, Linear Programming)
+
+30. how do we use derivatives to determine convexity? (Convex Optimization, Linear Programming)
+
+31. how do we show norms are convex? (Convex Optimization, Linear Programming)
+
+32. what is affine map? (Convex Optimization, Linear Programming)
+
+33. how do we get convex sets from convex functions? (Convex Optimization, Linear Programming)
+
+34. how do you show the convexity of linear constraints? (Convex Optimization, Linear Programming)
+
+35. how do we show the convexity of twice-differentiable functions? (Convex Optimization, Linear Programming)
+
+36. show that least square problem is convex using Hessian (Convex Optimization, Linear Programming)
+
+37. what is strict convexity? (Convex Optimization, Linear Programming)
+
+38. how do you show positive semi-definiteness of a hessian? (Convex Optimization, Linear Programming)
+
+39. what is the rule of thumb for choosing t in GD? (Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate)
+
+40. what is Newton's method? (Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate)
+
+41. how many iterations t of gradient descent do we need? (Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate)
+
+42. what is a "small enough" step size? (Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate)
+
+43. what is Lipschitz continuous? (Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate)
+
+44. what is the descent lemma? (Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate)
+
+45. what does it mean descent lemma gives us a convex quadratic upper bound on f? (Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate)
+
+46. what is the guaranteed progress in gradient descent? (Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate)
+
+47. why not use 1/L as step size? (Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate)
+
+48. what are the three assumptions for computing number of iterations? (Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate)
+
+49. how do you compute the convergence rate of gradient descent? (Convergence of Gradient Descent, Guaranteed Progress Bound, Step Sizes, Convergence Rate)
+
+50. what is the squeezing argument? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+51. what does it mean the convergence rate is dimension independent? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+52. how do we know gradient descent finds a global optimum for convex functions? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+53. what is the heavy ball method? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+54. how does Nesterov's accelerated gradient method reduce the error to O(1/t^2)? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+55. what is iteration complexity? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+56. what is rate of convergence? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+57. what rate and cost does an ideal algorithm achieve? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+58. what is Polyak-Lojasiewicz inequality? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+59. how do you show that PL implies linear rate gradient? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+60. how do you show that least squares has linear rate gradient? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+61. what are two good properties of strongly-convex functions? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+62. how does strong convexity imply PL inquality? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+63. what is maximum suboptimality? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+64. what does adding a L2 regularization do to convex loss function? (Rate of Convergence, PL Inequality, Strong Convexity)
+
+65. what are the known flaws of L1 regularization? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+66. what is a subgradient? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+67. why are there more than one subgradients in nonsmooth functions? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+68. how do you compute subgradients? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+69. why does L1 regularization give you sparsity? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+70. how do we apply subgradient to solve L1 regularization problem? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+71. how do we generalize L1 regularized least squares? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+72. what is projected gradient? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+73. how does projected gradient perform in convergence rate? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+74. what are the three definitions of convexity? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+75. what do eigenvalues of a Hessian show? (Feature Selection, Subgradients, Faster L1 Regularization, Projected Gradient, Proximal Gradient)
+
+76. what is the standard way of doing L1 regularization? (Proximal Gradient, Group Sparsity)
+
+77. how does minimization of quadratic approximation lead to projected gradient? (Proximal Gradient, Group Sparsity)
+
+78. what is the main advantange of simple convex sets? (Proximal Gradient, Group Sparsity)
+
+79. what is proximal gradient? (Proximal Gradient, Group Sparsity)
+
+80. what are the two conditions on r for proximal gradient to work? (Proximal Gradient, Group Sparsity)
+
+81. what is nice about Lipschitz continuity in proximal gradient? (Proximal Gradient, Group Sparsity)
+
+82. how is projected gradient a special case of proximal gradient? (Proximal Gradient, Group Sparsity)
+
+83. what does L1 regularization in softmax do? (Proximal Gradient, Group Sparsity)
+
+84. what is group sparsity? (Proximal Gradient, Group Sparsity)
+
+85. when do we want group sparsity? (Proximal Gradient, Group Sparsity)
+
+86. how do we achieve group sparsity? (Proximal Gradient, Group Sparsity)
+
+87. how can sparsity come from L2 norm? (Proximal Gradient, Group Sparsity)
+
+88. what is a regularization path? (Structured Regularization, Regularization Path)
+
+89. what does the regularization path of non-squared L2 regularization look like? (Structured Regularization, Regularization Path)
+
+90. how do we apply proximal gradient for L1 regularization? (Structured Regularization, Regularization Path)
+
+91. what is total variation regularization? (Structured Regularization, Regularization Path)
+
+92. how does TV regularization help LFM? (Structured Regularization, Regularization Path)
+
+93. how does inceptionism use TV reg? (Structured Regularization, Regularization Path)
+
+94. what is nuclear norm regularization? (Structured Regularization, Regularization Path)
+
+95. what is structured sparsity? (Structured Regularization, Regularization Path)
+
+96. how is structured sparsity used for face detection? (Structured Regularization, Regularization Path)
+
+97. how do we do structured regularization with proximal gradient? (Summary: Non-Smooth Optimization)
+
+98. what is transductive learning? (Transductive Learning, Label Propagation)
+
+99. how is transductive learning weird? (Transductive Learning, Label Propagation)
+
+100. what is label propagation? (Transductive Learning, Label Propagation)
+
+101. how do we choose edge weights for label propagation? (Transductive Learning, Label Propagation)
+
+102. how does YouTube use label propagation to tag videos? (Transductive Learning, Label Propagation)
+
+103. what is coordinate optimization? (Coordinate Optimization)
+
+104. what are good candidates for coordinate optimization? (Coordinate Optimization)
+
+105. how does binary label propagation give you weighted average? (Coordinate Optimization)
+
+106. how do we show the convergence rate of coordinate descent algorithm? (Coordinate Optimization)
+
+107. what if f is strongly convex? (Coordinate Optimization)
+
+108. what is Lipschitz Sampling? (Coordinate Optimization)
+
+109. which method for coordinate selection works best? (Coordinate Optimization)
+
+110. how do we use coordinate optimization for L1 regularization? (Coordinate Optimization)
+
+111. what is finite-sum optimization? (Stochastic Subgradient, Convergence Rate of SSG)
+
+112. what is deterministic gradient method? (Stochastic Subgradient, Convergence Rate of SSG)
+
+113. what is the difference between coordinate descent and stochastic descent? (Stochastic Subgradient, Convergence Rate of SSG)
+
+114. how many iterations are needed for stochastic gradients? (Stochastic Subgradient, Convergence Rate of SSG)
+
+115. why are SVM and logistic losses good for stochastic gradient? (Stochastic Subgradient, Convergence Rate of SSG)
+
+116. how do we show the convergence rate of stochastic gradient method? (Stochastic Subgradient, Convergence Rate of SSG)
+
+117. why is constant step size bad for stochastic subgradient? (Stochastic Subgradient, Convergence Rate of SSG)
+
+118. what are the convergence conditions of stochastic gradient? (Stochastic Averaging Subgradient, Lazy Updates)
+
+119. how are sparse matrices coded? (Stochastic Averaging Subgradient, Lazy Updates)
+
+120. how does sparsity help with stochastic gradient method? (Stochastic Averaging Subgradient, Lazy Updates)
+
+121. why is L2 regularization bad in terms of sparsity? (Stochastic Averaging Subgradient, Lazy Updates)
+
+122. what is lazy update? (Stochastic Averaging Subgradient, Lazy Updates)
+
+123. how do we set the step size for stochastic gradient? (Stochastic Averaging Subgradient, Lazy Updates)
+
+124. what is batching? (Stochastic Averaging Subgradient, Lazy Updates)
+
+125. what is SAG? (Stochastic Averaging Subgradient, Lazy Updates)
+
+126. what is SVRG? (More Stochastic Gradient Methods)
+
+127. for infinite dataset, what are the two assumptions we must make? (More Stochastic Gradient Methods)
+
+128. what is test loss? (More Stochastic Gradient Methods)
+
+129. why L2 regularization? (Kernel Trick)
+
+130. what is Gaussian-RBF Kernel? (Kernel Trick)
+
+131. how is kernel trick relevant to structured data? (Kernel Trick)
+
+132. what are valid kernels? (Kernel Trick)
+
+133. which models allow kernel tricks? (Kernel Trick)
+
+134. what is representer throrem? (Kernel Trick)
+
+135. what is multiple kernel learning? (Kernel Trick)
+
+136. if the kernel lets us use infinite number of features, doesn't it overfit? (Kernel Trick)
+
+137. what is structured prediction? (Structured Prediction, Density Estimation, Unsupervised Learning)
+
+138. what is the difference between structured prediction and supervised learning? (Structured Prediction, Density Estimation, Unsupervised Learning)
+
+139. why is density estimation the master problem in ML? (Structured Prediction, Density Estimation, Unsupervised Learning)
+
+140. what is discriminative model? (Structured Prediction, Density Estimation, Unsupervised Learning)
+
+141. what is discriminant functions? (Structured Prediction, Density Estimation, Unsupervised Learning)
+
+142. what is the question we ask for density estimation? (Discrete Distribtion, Continuous Distribution)
+
+143. what is multinomial distribution? (Discrete Distribtion, Continuous Distribution)
+
+144. what is Laplace smoothing? (Discrete Distribtion, Continuous Distribution)
+
+145. how is beta prior related to MAP estimation with Bernoulli Distribution? (Discrete Distribtion, Continuous Distribution)
+
+146. what are the assumptions we need for general discrete distribution? (Discrete Distribtion, Continuous Distribution)
+
+147. why is Gaussian distribution nice? (Discrete Distribtion, Continuous Distribution)
+
+148. why is Gaussian a bad idea? (Discrete Distribtion, Continuous Distribution)
+
+149. how is the product of independent Gaussians a special case of multivariate Gaussian? (Discrete Distribtion, Continuous Distribution)
+
+150. what does independence among variables have to do with covariance? (Discrete Distribtion, Continuous Distribution)
+
+151. what does PCA have to do with covariance? (Discrete Distribtion, Continuous Distribution)
+
+152. what is the MLE of multivariate Gaussian? (Discrete Distribtion, Continuous Distribution)
+
+153. what is precision matrix? (Properties of Multivariate Gaussian)
+
+154. how do we get the MLE of multivariate gaussians? (Properties of Multivariate Gaussian)
+
+155. how do we regularize multivariate gaussian? (Properties of Multivariate Gaussian)
+
+156. what does it mean multivariate Gaussian is closed? (Properties of Multivariate Gaussian)
+
+157. what does affine transformation on multivariate gaussian do? (Properties of Multivariate Gaussian)
+
+158. how is marginal distribution of Gaussian related to affine transformation of multivariate Gaussian? (Properties of Multivariate Gaussian)
+
+159. how do we deal with multimodally distributed data? (Mixture Models)
+
+160. how does MM help Gaussian be more robust? (Mixture Models)
+
+161. what is expectation maximization? (Mixture Models)
+
+162. what is the definition between linear and convex combinations? (Mixture Models)
+
+163. how can density estimation be used for image recognition? (Mixture Models)
+
+164. why is independent Bernoulli model for image training a bad idea? (Mixture Models)
+
+165. what is general discrete distribution? why is it bad for digit recognition? (Mixture Models)
+
+166. how does mixture of independent Bernoullis model dependencies? (Mixture Models)
+
+167. what do you always ask about missing values? (Learning with Hidden Values)
+
+168. what is imputation approach? (Learning with Hidden Values)
+
+169. how do you use block coordinate optimization for missing values? (Learning with Hidden Values)
+
+170. how are MAR and SSL related? (Learning with Hidden Values)
+
+171. how do you use imputation for SSL? (Learning with Hidden Values)
+
+172. why do we introduce MAR variables for MM? (Learning with Hidden Values)
+
+173. how are kmeans and mixture of Gaussians related? (Learning with Hidden Values)
+
+174. what are the drawbacks of imputation approach? (Learning with Hidden Values)
+
+175. what is the difference between parameters, hyper-parameters, and nuisance parameters? (Expectation Maximization)
+
+176. what is EM? what is it used for? (Expectation Maximization)
+
+177. what's painful about optimizing complete likelihood? (Expectation Maximization)
+
+178. what is a complete likelihood? (Expectation Maximization)
+
+179. how does EM work? what does it maximize? (Expectation Maximization)
+
+180. what is the E-step? (Expectation Maximization)
+
+181. what is the M-step? (Expectation Maximization)
+
+182. what is the difference between hard EM and soft EM? (Expectation Maximization)
+
+183. how does mixture model work with EM? (EM for MM)
+
+184. what is responsibility? (EM for MM)
+
+185. when is EM useful? (Convergence of EM)
+
+186. how do we show that EM iterations are monotonic? (Convergence of EM)
+
+187. what is negative entropy? (Convergence of EM)
+
+188. what does the monotonicity of EM imply? (Convergence of EM)
+
+189. what are the two bounds required to show that we improve the objective by improving Q? (Convergence of EM)
+
+190. how do we define a non-parametric mixture model? (Kernel Density Estimation)
+
+191. how does KDE generalize histogram? (Kernel Density Estimation)
+
+192. what does kernel mean in KDE? (Kernel Density Estimation)
+
+193. what is the relationship between KDE and RBF? (Kernel Density Estimation)
+
+194. how are kmeans and EM similar in terms of initialization? (Kernel Density Estimation)
+
+195. is NLL better when lower or higher? (Kernel Density Estimation)
+
+196. what is the application of KDE? (Kernel Density Estimation)
+
+197. what is the relationship between PCA and probabilistic PCA? (Kernel Density Estimation)
+
+198. what is factor analysis? (Mixture-Model Wrap-Up)
+
+199. what is ICA? (Mixture-Model Wrap-Up)
+
+200. what is BSS? (Mixture-Model Wrap-Up)
+
+201. what is a markov chain? (Markov Chains)
+
+202. what are the ingredients for Markov Chains? (Markov Chains)
+
+203. what is a homogeneous markov chain? (Markov Chains)
+
+204. how is MC used in MNIST digits? (Markov Chains)
+
+205. how is inverse CDF related to binary search? (Sampling, Monte Carlo)
+
+206. how do we sample from a multivariate Gaussian? (Sampling, Monte Carlo)
+
+207. what is chain rule of probability? (Sampling, Monte Carlo)
+
+208. what is ancestral sampling? (Sampling, Monte Carlo)
+
+209. what is inference? (Sampling, Monte Carlo)
+
+210. how is inference more difficult for Markov chain? (Sampling, Monte Carlo)
+
+211. what is a Monte Carlo method? (Sampling, Monte Carlo)
+
+212. how is probability and mean estimate a special case of Monte Carlo? (Sampling, Monte Carlo)
+
+213. how do we do exact marginal on Markov Chain? (Sampling, Monte Carlo)
+
+214. how is Monte Carlo a special case of stochastic gradient? (PageRank Algorithm, Decoding, Message Passing)
+
+215. what makes a Markov chain ergodic? (PageRank Algorithm, Decoding, Message Passing)
+
+216. what is decoding? (PageRank Algorithm, Decoding, Message Passing)
+
+217. what is message passing? (PageRank Algorithm, Decoding, Message Passing)
+
+218. how do we compute unknown transition probabilities? (PageRank Algorithm, Decoding, Message Passing)
+
+219. how does message passing generalize Markov chain models? (PageRank Algorithm, Decoding, Message Passing)
+
+220. what do we do about Markov property being too strong? (Directed Acyclic Graphical Models, D-Separation)
+
+221. how does DAG model joint distributions? (Directed Acyclic Graphical Models, D-Separation)
+
+222. what is D-separation? (Directed Acyclic Graphical Models, D-Separation)
+
+223. how do you tell conditional independence from looking at DAG? (D-Separate and Plate Notation)
+
+224. does D-separation imply conditional independences? (D-Separate and Plate Notation)
+
+225. how do we turn distributions into DAG? (D-Separate and Plate Notation)
+
+226. what is tabular parametrization? (D-Separate and Plate Notation)
+
+227. how do you model marginal distribution in general DAGs? (D-Separate and Plate Notation)
+
+228. how does structure learning reduce to feature selection? (DAG Structure Learning)
+
+229. what is the difference between directed and undirected graphical models? (DAG Structure Learning)
+
+230. how is D-separation applied to UGMs? (DAG Structure Learning)
+
+231. how is multivariate gaussian a special case of pairwise UGM? (DAG Structure Learning)
+
+232. how do you solve for MLE for UGM? (DAG Structure Learning)
+
+233. what are some inference tasks for graphical models? (DAG Structure Learning)
+
+234. how do we convert DAG to UGM? (DAG Structure Learning)
+
+235. how do we solve inference problems for graphical models? (Exact Inference in UGM, ICM and Gibbs Sampling)
+
+236. what is belief propagation? (Exact Inference in UGM, ICM and Gibbs Sampling)
+
+237. what is the problem with message passing for exact inference in UGM? (Exact Inference in UGM, ICM and Gibbs Sampling)
+
+238. what is ICM? (Exact Inference in UGM, ICM and Gibbs Sampling)
+
+239. why does ICM not find the global optimum? (Exact Inference in UGM, ICM and Gibbs Sampling)
+
+240. what is the difference between ICM and Gibbs Sampling? (Exact Inference in UGM, ICM and Gibbs Sampling)
+
+241. what is Gibbs Sampling? (Exact Inference in UGM, ICM and Gibbs Sampling)
+
+242. what is the relationship between Gibbs Sampling and MCMC? (Exact Inference in UGM, ICM and Gibbs Sampling)
+
+243. what are burn in and thinning? (Exact Inference in UGM, ICM and Gibbs Sampling)
+
+244. how do we learn the phi functions? (Parameter Learning in UGM)
+
+245. how do we use deep learning for unsupervised learning? (HMM and Boltzmann Machines)
+
+246. what is Boltzmann machine? (HMM and Boltzmann Machines)
+
+247. what does it mean to do block Gibbs sampling up and down on RBM? (HMM and Boltzmann Machines)
+
+248. what are the 3 classes of structured prediction methods? (Conditional Random Fields)
+
+249. what is backpropagation? (Backpropagation)
+
+250. what is conditional neural fields? (Backpropagation)
+
+251. how do we use conditional random fields for gesture recognition? (Backpropagation)
+
+252. what is an end-to-end system? (Region CNN)
+
+253. how do we enforce contiguity between labels at the final layer? (Region CNN)
+
+254. what is the problem with state-space models? (Recurrent Neural Networks)
+
+255. what is RNN? (Recurrent Neural Networks)
+
+256. what is sequence to sequence learning? (Recurrent Neural Networks)
+
+257. how do we deal with vanishing gradient in RNN? (Recurrent Neural Networks)
+
+258. what is LSTM? (Recurrent Neural Networks)
+
+259. how do we learn prior from data? (Recurrent Neural Networks)
+
+260. how do we do hypothesis testing with bayesian inference? (Recurrent Neural Networks)
+
+261. what is ARD? (Recurrent Neural Networks)
+
+262. what is type 2 maximum likelihood? (Recurrent Neural Networks)
+
+263. how is Bayesian inference easier with conjugate priors? (Recurrent Neural Networks)
+
+264. what is the difference between MAP and posterior predictive? (Recurrent Neural Networks)
+
+265. what is the effect of beta prior? (Recurrent Neural Networks)
+
+266. what is improper prior? (Recurrent Neural Networks)
+
+267. what are some conjugate priors? (Recurrent Neural Networks)
+
+268. how is logistic regression related to Bernoulli distribution? (Recurrent Neural Networks)
+
+269. how do we represent hierarchical bayes as a graphical model? (Topic Models)
+
+270. when are hyperpriors necessary? (Topic Models)
+
+271. what is a topic model? (Topic Models)
+
+272. what is latent semantic indexing? (Topic Models)
+
+273. what is LDA? (Topic Models)
+
+274. what is the problem with mixture models? (Topic Models)
+
+275. how do we deal with no-closed-form posterior expressions? (Rejection and Importance Sampling)
+
+276. what does it mean Gibbs sampling is an approximate sampler? (Rejection and Importance Sampling)
+
+277. what is MCMC? (Rejection and Importance Sampling)
