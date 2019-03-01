@@ -1,159 +1,237 @@
-import argparse, random, re, os, numpy
-
+from typing import *
+import argparse, random, re
 random.seed()
 
 # use RegEx to parse topics, questions, answers
-topic_pattern = "(\n===\s*.+\s*===\n)"
-question_pattern = "(\n\*+.+\n)"
-answer_pattern = "(\n?\-\>.+\n?)"
+topic_pattern = "^===\\s*(.+?)\s*==="
+question_pattern = "^\\*+(.+)"
+answer_pattern = "^\\-\\>(.+)"
 
-class TopicNetwork:
+class ValueContainer:
+    def __init__(self, value):
+        self.value = value
 
-    def __init__(self, topics, p):
-        self.currentIdx = random.randrange(len(topics))
-        self.topics = topics
-        self.p = p
+    def get_value(self):
+        return self.value
 
-    def run(self):
-        """
-        Run one step of the TN.
-        Pop a random question of current topic.
-        By probability p move onto next
-        """
 
-        if len(self.topics) == 0:
-            raise "Error: Too many questions!"
+class Topic(ValueContainer):
+    def __init__(self, value):
+        super(Topic, self).__init__(value)
 
-        # choose a random question
-        self.currentIdx = self.currentIdx % len(self.topics)
-        t = self.topics[self.currentIdx]
-        qs = t.topic_qs
 
-        if len(qs) <= 0:
-            self.topics.pop(self.currentIdx)
-            return self.run()
+class Question(ValueContainer):
+    def __init__(self, value):
+        super(Question, self).__init__(value)
 
-        q = random.choice(qs)
-        qs.remove(q)
-        if random.random() + len(qs)/100.0 <= self.p:
-            self.currentIdx += 1
-        return t, q
 
-class Topic:
-    def __init__(self, text, topic_qs):
-        self.text = text
-        self.topic_qs = topic_qs
+class Answer(ValueContainer):
+    def __init__(self, value):
+        super(Answer, self).__init__(value)
 
-class Question:
-    def __init__(self, text, answers):
-        self.text = text
+
+class QnA:
+    answers = []
+    question = None
+
+    def __init__(self, question: Question, answers: List[Answer]):
+        self.question = question
         self.answers = answers
 
-def parse_answers(answer_split_list):
-    if len(answer_split_list) == 0:
+
+class TopicQnAPair:
+    topic = None
+    qnas = []
+
+    def __init__(self, topic: Topic, qnas: List[QnA]):
+        self.topic = topic
+        self.qnas = qnas
+
+
+class TopicQnATriple:
+    topic = None
+    question = None
+    answers = []
+
+    def __init__(self, topic: Topic, question: Question, answers: List[Answer]):
+        self.topic = topic
+        self.question = question
+        self.answers = answers
+
+
+class Representer:
+
+    def __init__(self):
+        pass
+
+    def flatten_topic_qna_pair(self, topic_qna_pair: TopicQnAPair) -> List[TopicQnATriple]:
+        return [TopicQnATriple(topic_qna_pair.topic, qna.question, qna.answers)
+                for qna in topic_qna_pair.qnas]
+
+    def represent_question_of_topic(self, question: Question, topic: Topic):
+        return "{:s} ({:s})".format(question.get_value(), topic.get_value())
+
+    def represent_topic_qna_triple_without_answers(self, topic_qna_triple: TopicQnATriple) -> str:
+        question_topic_line = self.represent_question_of_topic(topic_qna_triple.question, topic_qna_triple.topic)
+        return "{:s}\n".format(question_topic_line)
+
+    def represent_topic_qna_triple_with_answers(self, topic_qna_triple: TopicQnATriple):
+        question_topic_line = self.represent_question_of_topic(topic_qna_triple.question, topic_qna_triple.topic)
+        answer_lines = "\n".join(["-> {:s}".format(ans.get_value()) for ans in topic_qna_triple.answers])
+        return "{:s}\n{:s}\n".format(question_topic_line, answer_lines)
+
+
+class Document:
+    topic_qna_pairs = []
+
+    def __init__(self, topic_qna_pairs: List[TopicQnAPair]):
+        self.topic_qna_pairs = topic_qna_pairs
+
+
+def parse_generic(s: str, pattern: str, constructor):
+    m = re.match(pattern, s)
+    if not m:
+        return None
+    matched = m.group(1).strip().strip("\n")
+    return constructor(matched)
+
+
+def parse_answer(s: str) -> Answer or None:
+    return parse_generic(s, answer_pattern, Answer)
+
+
+def parse_question(s: str) -> Question or None:
+    return parse_generic(s, question_pattern, Question)
+
+
+def parse_topic(s: str) -> Topic or None:
+    return parse_generic(s, topic_pattern, Topic)
+
+
+def parse_qna(token_list: List[ValueContainer]) -> QnA or None:
+    if len(token_list) == 0:
+        return None
+    if token_list[0].__class__ is not Question:
+        return None
+    if len(list(filter(lambda x: x.__class__ != Answer, token_list[1:]))) > 0:
+        return None
+
+    question = token_list[0]
+    answers = token_list[1:]
+    return QnA(question, answers)
+
+
+def parse_topic_qna_pair(token_list: List[ValueContainer]) -> TopicQnAPair or None:
+    if len(token_list) == 0:
+        return None
+    if token_list[0].__class__ is not Topic:
+        return None
+
+    topic = token_list[0]
+    qna_all_token_list = token_list[1:]
+    qna_all_token_splitted = split_by_token(qna_all_token_list, Question)
+    qnas = [parse_qna(x) for x in qna_all_token_splitted]
+    filtered = [q for q in qnas if q is not None]
+    return TopicQnAPair(topic, filtered)
+
+
+def split_by_token(token_list: List[ValueContainer], clazz) -> List[List[ValueContainer]]:
+    if len(token_list) == 0:
         return []
-    m = re.match(answer_pattern, answer_split_list[0])
-    if m == None:
-        return []
-    answer = m.group(1).strip().strip("\n")
-    return [answer] + parse_answers(answer_split_list[1:])
+    splitted = []
+    buffer = []
+    for i, token in enumerate(token_list):
+        if token.__class__ is clazz:
+            if len(buffer) > 0:
+                splitted.append(buffer)
+                buffer = []
+        buffer.append(token)
 
-def parse_questions(question_split_list):
-    if len(question_split_list) == 0:
-        return []
-
-    m = re.match(question_pattern, question_split_list[0])
-    if m == None:
-        return parse_questions(question_split_list[1:])
-
-    question_title = question_split_list[0].strip()
-    answers = question_split_list[1].split("\n\n")[0].split("\n")
-
-    new_question = Question(question_title, answers)
-    return [new_question] + parse_questions(question_split_list[2:])
-
-def parse_topics(topic_split_list):
-    if len(topic_split_list) <= 1:
-        return []
-
-    m = re.match(topic_pattern, topic_split_list[0])
-    if m == None:
-        return parse_topics(topic_split_list[1:])
-    topic_title = topic_split_list[0].strip()
-    topic_title = re.match("(===\s*)(.+)(\s*===)",topic_title).group(2).strip()
-    question_split = re.split(question_pattern, topic_split_list[1])
-    questions = parse_questions(question_split)
-    new_topic = Topic(topic_title, questions)
-    return [new_topic] + parse_topics(topic_split_list[2:])
+    if len(buffer) > 0:
+        splitted.append(buffer)
+    return splitted
 
 
-def get_all_questions(topic_network):
-    question_list = []
-    for topic in topic_network.topics:
-        for question in topic.topic_qs:
-            question_list.append(question)
-    return question_list
+def parse_something(s: str) -> ValueContainer:
+    topic = parse_topic(s)
+    question = parse_question(s)
+    answer = parse_answer(s)
+    if topic is not None:
+        return topic
+    if question is not None:
+        return question
+    if answer is not None:
+        return answer
+
+
+def tokenize(s: str) -> List[ValueContainer]:
+    splitted = s.split("\n")
+    tokenized = [parse_something(st) for st in splitted]
+    filtered = [token for token in tokenized if token is not None]
+    return filtered
+
+
+def parse_qgen_document(s: str) -> Document:
+    tokenized = tokenize(s)
+    splitted_by_topic = split_by_token(tokenized, Topic)
+    topic_qna_pairs = [parse_topic_qna_pair(lst) for lst in splitted_by_topic]
+    filtered = [t for t in topic_qna_pairs if t is not None]
+    return Document(filtered)
 
 
 def main():
     # initialize and parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-f", "--filenames", required=True, action='store', nargs="+", type=str, help="List of file names to take into quiz")
-    parser.add_argument("-n", "--num-questions", required=True, action='store', type=int, help="Total number of questions in quiz")
-    parser.add_argument('-q', '--output-quiz-file', required=True, action='store', type=str, help='Output quiz filename')
-    parser.add_argument('-a', '--output-answer-file', required=True, action='store', type=str, help='Output answer filename')
-    parser.add_argument('-A', '--output-allq-file', required=True, action='store', type=str, help='Output all-questions filename')
+    parser.add_argument("-f", "--filename", required=True, action='store', type=str,
+                        help="File name to take into quiz")
+    parser.add_argument("-n", "--num-questions", required=True, action='store', type=int,
+                        help="Total number of questions in quiz")
+    parser.add_argument('-q', '--output-quiz-file', required=True, action='store', type=str,
+                        help='Output quiz filename')
+    parser.add_argument('-a', '--output-answer-file', required=True, action='store', type=str,
+                        help='Output answer filename')
+    parser.add_argument('-A', '--output-allq-file', required=True, action='store', type=str,
+                        help='Output all-questions filename')
 
     args = parser.parse_args()
 
     v = vars(args)
-    filenames = v['filenames']
+    filename = v['filename']
     n = v['num_questions']
-    wf = open(v['output_quiz_file'], 'w')
-    af = open(v['output_answer_file'], 'w')
-    aq = open(v['output_allq_file'], 'w')
+    wf = v['output_quiz_file']
+    af = v['output_answer_file']
+    aq = v['output_allq_file']
 
-    allq = []
+    with open(filename, 'r') as f:
+        raw_text = f.read()
+    document = parse_qgen_document(raw_text)
 
-    # hierarchy:
-    # topic has zero or more questions,
-    # question has zero or more answers
+    representer = Representer()
 
-    topics = []
-    for filename in filenames:
-        f = open(filename)
-        rawtext = f.read()
-        topic_split = re.split(topic_pattern, rawtext)
-        topics = topics + parse_topics(topic_split)
-        f.close()
+    all_topic_qna_triples = [representer.flatten_topic_qna_pair(topic_qna_pair)
+                             for topic_qna_pair in document.topic_qna_pairs]
+    all_topic_qna_triples_flattened = [item for sublist in all_topic_qna_triples
+                                       for item in sublist]
 
-    # write chosen number of random questions into -qgen.txt file
-    topic_network = TopicNetwork(topics, 0.8)
+    chosen_topic_qna_triples = random.sample(all_topic_qna_triples_flattened, n)
 
-    num = 1
-    while num <= n:
-        t, q = topic_network.run()
-        wf.write(str(num)+ ". " + q.text + " (" + t.text + ")")
-        af.write(str(num)+ ". " + q.text + " (" + t.text + ")")
-        af.write("\n")
-        for a in q.answers:
-            af.write(a)
-            af.write("\n")
-        num = num+1
-        for i in range(6):
-            wf.write("\n")
-        for i in range(2):
-            af.write("\n")
+    all_questions_without_answers = \
+        "\n".join(["{:d}. {:s}".format(i+1, representer.represent_topic_qna_triple_without_answers(t))
+                                               for i, t in enumerate(all_topic_qna_triples_flattened)])
+    chosen_questions_without_answers = \
+        "\n".join(["{:d}. {:s}".format(i+1, representer.represent_topic_qna_triple_without_answers(t))
+                                                  for i, t in enumerate(chosen_topic_qna_triples)])
+    chosen_questions_with_answers = \
+        "\n".join(["{:d}. {:s}".format(i+1, representer.represent_topic_qna_triple_with_answers(t))
+                                               for i, t in enumerate(chosen_topic_qna_triples)])
 
-    wf.close()
-    af.close()
-    aq.close()
+    with open(wf, 'w') as f:
+        f.write(chosen_questions_without_answers)
+    with open(af, 'w') as f:
+        f.write(chosen_questions_with_answers)
+    with open(aq, 'w') as f:
+        f.write(all_questions_without_answers)
 
-    num = 1
-    while num <= n:
-        t, q = topic_network.run()
-
-        num = num+1
 
 if __name__ == '__main__':
     main()
