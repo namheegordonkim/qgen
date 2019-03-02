@@ -84,3 +84,4 @@ The above command will generate three files:
 * Treat note-taking as a data mining task. Ask: "if I was teaching this course, what would I ask on the exam?" and write it down. Provide the answer key in a logical order.
 * In my own experience, this technique works best for technical courses with quantitative exams.
 * In expression-heavy classes like math and physics, it is best to use QGen to test conceptual understanding and use practice exams to practice problem solving.
+* Test yourself early and often.
