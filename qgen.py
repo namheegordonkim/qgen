@@ -188,9 +188,9 @@ def main():
                         help="Total number of questions in quiz")
     parser.add_argument('-q', '--output-quiz-file', required=True, action='store', type=str,
                         help='Output quiz filename')
-    parser.add_argument('-a', '--output-answer-file', required=True, action='store', type=str,
+    parser.add_argument('-a', '--output-answer-file', required=False, action='store', type=str,
                         help='Output answer filename')
-    parser.add_argument('-A', '--output-allq-file', required=True, action='store', type=str,
+    parser.add_argument('-A', '--output-allq-file', required=False, action='store', type=str,
                         help='Output all-questions filename')
 
     args = parser.parse_args()
@@ -227,10 +227,12 @@ def main():
 
     with open(wf, 'w') as f:
         f.write(chosen_questions_without_answers)
-    with open(af, 'w') as f:
-        f.write(chosen_questions_with_answers)
-    with open(aq, 'w') as f:
-        f.write(all_questions_without_answers)
+    if af is not None:
+        with open(af, 'w') as f:
+            f.write(chosen_questions_with_answers)
+    if aq is not None:
+        with open(aq, 'w') as f:
+            f.write(all_questions_without_answers)
 
 
 if __name__ == '__main__':
