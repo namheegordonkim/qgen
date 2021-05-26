@@ -202,7 +202,7 @@ def main():
     af = v['output_answer_file']
     aq = v['output_allq_file']
 
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf-8') as f:
         raw_text = f.read()
     document = parse_qgen_document(raw_text)
 
@@ -225,13 +225,13 @@ def main():
         "\n".join(["{:d}. {:s}".format(i+1, representer.represent_topic_qna_triple_with_answers(t))
                                                for i, t in enumerate(chosen_topic_qna_triples)])
 
-    with open(wf, 'w') as f:
+    with open(wf, 'w', encoding='utf-8') as f:
         f.write(chosen_questions_without_answers)
     if af is not None:
-        with open(af, 'w') as f:
+        with open(af, 'w', encoding='utf-8') as f:
             f.write(chosen_questions_with_answers)
     if aq is not None:
-        with open(aq, 'w') as f:
+        with open(aq, 'w', encoding='utf-8') as f:
             f.write(all_questions_without_answers)
 
 
