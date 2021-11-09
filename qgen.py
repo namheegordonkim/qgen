@@ -1,5 +1,6 @@
 from typing import *
 import argparse, random, re
+import numpy as np
 random.seed()
 
 # use RegEx to parse topics, questions, answers
@@ -213,7 +214,8 @@ def main():
     all_topic_qna_triples_flattened = [item for sublist in all_topic_qna_triples
                                        for item in sublist]
 
-    chosen_topic_qna_triples = random.sample(all_topic_qna_triples_flattened, n)
+    #chosen_topic_qna_triples = random.sample(all_topic_qna_triples_flattened, n)
+    chosen_topic_qna_triples = np.random.choice(all_topic_qna_triples_flattened, n, replace=False)
 
     all_questions_without_answers = \
         "\n".join(["{:d}. {:s}".format(i+1, representer.represent_topic_qna_triple_without_answers(t))
